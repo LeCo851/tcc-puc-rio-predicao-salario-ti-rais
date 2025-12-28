@@ -16,12 +16,25 @@ public class SalarioService {
 
     private final RestTemplate restTemplate;
 
-    public PrevisaoSalarioDTO obterEstimativa(DadosProfissionalDTO dadosProfissionalDTO){
+    public PrevisaoSalarioDTO obterEstimativa(DadosProfissionalDTO dados) {
+        long inicio = System.currentTimeMillis();
+        System.out.println(">>> [JAVA] Iniciando chamada ao Python...");
 
-        return restTemplate.postForObject(
-                mlApiUrl,
-                dadosProfissionalDTO,
-                PrevisaoSalarioDTO.class
-        );
+        try {
+            PrevisaoSalarioDTO resposta = restTemplate.postForObject(
+                    mlApiUrl,
+                    dados,
+                    PrevisaoSalarioDTO.class
+            );
+
+            long fim = System.currentTimeMillis();
+            System.out.println(">>> [JAVA] Resposta recebida em: " + (fim - inicio) + " ms");
+
+            return resposta;
+        } catch (Exception e) {
+            long fim = System.currentTimeMillis();
+            System.out.println(">>> [JAVA] Erro após: " + (fim - inicio) + " ms");
+            throw e;
+        }
     }
 }

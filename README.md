@@ -4,32 +4,43 @@ Este projeto é parte do Trabalho de Conclusão de Curso (TCC) do MBA em Data Sc
 
 ## 🏗️ Arquitetura do Projeto
 
-O projeto é composto por dois serviços principais orquestrados via Docker Compose:
+O projeto segue uma arquitetura de microsserviços composta por três camadas principais:
 
-1.  **ml-api (Python/FastAPI):**
-    *   Responsável por carregar o modelo de Machine Learning treinado (LightGBM).
-    *   Recebe os dados do profissional, realiza o pré-processamento (tradução de enums, feature engineering) e executa a inferência.
-    *   Expõe um endpoint REST (`/predict`) para consumo.
+1.  **angular-app (Frontend):**
+    *   Interface web desenvolvida em Angular.
+    *   Permite ao usuário inserir seus dados (cargo, escolaridade, etc.) de forma amigável.
+    *   Consome a API do backend (`spring-app`).
 
-2.  **spring-app (Java/Spring Boot):**
-    *   Atua como backend da aplicação cliente.
-    *   Recebe as requisições do frontend (ou cliente API), valida os dados e repassa para a `ml-api`.
-    *   Abstrai a comunicação com o serviço de ML.
+2.  **spring-app (Backend):**
+    *   API REST desenvolvida em Java com Spring Boot.
+    *   Atua como middleware e gateway.
+    *   Recebe as requisições do frontend, valida os dados e repassa para o serviço de ML.
+
+3.  **ml-api (Machine Learning Service):**
+    *   Serviço Python/FastAPI.
+    *   Carrega o modelo LightGBM treinado.
+    *   Realiza o pré-processamento e a inferência salarial.
 
 ## 🚀 Tecnologias Utilizadas
 
-*   **Machine Learning & Python:**
-    *   Python 3.9+
-    *   FastAPI
-    *   Pandas, NumPy, Scikit-learn
-    *   LightGBM (Modelo de Regressão)
-    *   Joblib (Serialização do modelo)
+*   **Frontend Web:**
+    *   Angular 17+
+    *   TypeScript
+    *   HTML5 / CSS3
+    *   Node.js & NPM
 
 *   **Backend Java:**
     *   Java 17+
     *   Spring Boot 3.x
     *   Maven
     *   Lombok
+
+*   **Machine Learning & Python:**
+    *   Python 3.9+
+    *   FastAPI
+    *   Pandas, NumPy, Scikit-learn
+    *   LightGBM (Modelo de Regressão)
+    *   Joblib
 
 *   **Infraestrutura:**
     *   Docker & Docker Compose
@@ -38,76 +49,62 @@ O projeto é composto por dois serviços principais orquestrados via Docker Comp
 
 ```
 tcc-puc-rio-predicao-salario-ti-rais/
-├── docker-compose.yml      # Orquestração dos containers
-├── ml-api/                 # Serviço de Machine Learning
-│   ├── app.py              # Código da API FastAPI
-│   ├── Dockerfile          # Definição da imagem Python
-│   ├── modelo_salario_ti.pkl # Modelo treinado e artefatos
-│   ├── requirements.txt    # Dependências Python
+├── angular-app/            # Frontend Angular
+│   ├── src/
+│   ├── package.json
 │   └── ...
-└── spring-app/             # Aplicação Spring Boot
-    ├── src/                # Código fonte Java
-    ├── pom.xml             # Dependências Maven
-    └── ...
+├── spring-app/             # Backend Spring Boot
+│   ├── src/
+│   ├── pom.xml
+│   └── ...
+├── ml-api/                 # Serviço de Machine Learning
+│   ├── app.py
+│   ├── Dockerfile
+│   ├── modelo_salario_ti.pkl
+│   └── ...
+└── docker-compose.yml      # Orquestração (ML API)
 ```
 
 ## 🛠️ Como Executar
 
 ### Pré-requisitos
 
-*   Docker e Docker Compose instalados.
+*   Docker e Docker Compose.
+*   Java JDK 17+ e Maven (para rodar o backend localmente).
+*   Node.js e NPM (para rodar o frontend localmente).
 
 ### Passo a Passo
 
-1.  **Clone o repositório:**
-    ```bash
-    git clone <url-do-repositorio>
-    cd tcc-puc-rio-predicao-salario-ti-rais
-    ```
+#### 1. Serviço de Machine Learning (Docker)
+O serviço de ML está containerizado. Na raiz do projeto, execute:
+```bash
+docker-compose up --build
+```
+*   O serviço estará disponível em: `http://localhost:8000`
 
-2.  **Suba os serviços com Docker Compose:**
-    Na raiz do projeto, execute:
-    ```bash
-    docker-compose up --build
-    ```
-    *Isso irá construir as imagens do Python e (futuramente) do Java, e iniciar os containers.*
+#### 2. Backend (Spring Boot)
+Em um novo terminal, navegue até a pasta `spring-app` e execute:
+```bash
+cd spring-app
+./mvnw spring-boot:run
+```
+*   A API estará disponível em: `http://localhost:8080`
 
-3.  **Acesse os serviços:**
+#### 3. Frontend (Angular)
+Em outro terminal, navegue até a pasta `angular-app`, instale as dependências e inicie o servidor:
+```bash
+cd angular-app
+npm install
+ng serve
+```
+*   Acesse a aplicação no navegador em: `http://localhost:4200`
 
-    *   **API de ML (Documentação Swagger):** [http://localhost:8000/docs](http://localhost:8000/docs)
-    *   **Spring App:** [http://localhost:8080](http://localhost:8080) (A API estará em `/api/salarios/prever`)
+## 🔌 Endpoints e Fluxo
 
-## 🔌 Endpoints Principais
-
-### Spring App (Porta 8080)
-
-*   **POST** `/api/salarios/prever`
-    *   Recebe os dados do profissional e retorna a estimativa salarial.
-    *   **Exemplo de Payload:**
-        ```json
-        {
-          "cargo": "Analista de desenvolvimento de sistemas",
-          "idade": 30,
-          "escolaridade": "Superior Completo",
-          "tamanho_empresa": "De 50 a 99 funcionários",
-          "setor": "Instituições Financeiras (Bancos)",
-          "uf": "SP",
-          "sexo": "Masculino",
-          "raca": "Branca"
-        }
-        ```
-
-### ML API (Porta 8000)
-
-*   **POST** `/predict`
-    *   Endpoint interno utilizado pelo Spring App para realizar a inferência.
-
-## 📊 Modelo de Machine Learning
-
-O modelo utiliza o algoritmo **LightGBM** e foi treinado com dados da RAIS filtrados para ocupações de TI. O processo de inferência envolve:
-1.  Tradução de termos em linguagem natural para códigos da RAIS.
-2.  Target Encoding para variáveis categóricas de alta cardinalidade (CBO, UF, etc.).
-3.  Predição do log do salário e conversão para escala real.
+1.  **Usuário** acessa `http://localhost:4200` e preenche o formulário.
+2.  **Angular** envia POST para `http://localhost:8080/api/salarios/prever`.
+3.  **Spring Boot** repassa a requisição para `http://localhost:8000/predict`.
+4.  **ML API** retorna o salário estimado, que faz o caminho inverso até o usuário.
 
 ## 📝 Autor
 
