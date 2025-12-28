@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/ml-api/ml-api.iml" filepath="$PROJECT_DIR$/ml-api/ml-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tcc-puc-rio-predicao-salario-ti-rais.iml" filepath="$PROJECT_DIR$/tcc-puc-rio-predicao-salario-ti-rais.iml" />
+    </modules>
+  </component>
+</project>
