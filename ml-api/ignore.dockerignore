@@ -1,0 +1,14 @@
+# Ignora subpastas de dados brutos
+app/dados/
+app/csv/
+**/__pycache__
+**/*.csv
+**/*.pyc
+
+# Ignora arquivos de log e ambiente virtual
+venv/
+.env
+.git
+
+# ignora notebooks
+.ipynb
