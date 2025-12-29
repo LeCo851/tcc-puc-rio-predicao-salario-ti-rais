@@ -9,6 +9,7 @@ O projeto segue uma arquitetura de microsserviços composta por três camadas pr
 1.  **angular-app (Frontend):**
     *   Interface web desenvolvida em Angular.
     *   Permite ao usuário inserir seus dados (cargo, escolaridade, etc.) de forma amigável.
+    *   **Dashboard:** Visualização interativa de dados geográficos (Mapa do Brasil) utilizando Highcharts.
     *   Consome a API do backend (`spring-app`).
 
 2.  **spring-app (Backend):**
@@ -26,6 +27,7 @@ O projeto segue uma arquitetura de microsserviços composta por três camadas pr
 *   **Frontend Web:**
     *   Angular 17+
     *   TypeScript
+    *   Highcharts & Highmaps
     *   HTML5 / CSS3
     *   Node.js & NPM
 

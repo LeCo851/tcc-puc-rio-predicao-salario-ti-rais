@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+ml-api/base_dados_rais.csv
+ml-api/dados_rais_brutos.parquet
