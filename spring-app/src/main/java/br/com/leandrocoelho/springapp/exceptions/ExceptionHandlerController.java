@@ -51,4 +51,22 @@ public class ExceptionHandlerController {
         StandardError err = new StandardError(Instant.now(), status.value(), error, msg, request.getRequestURI());
         return ResponseEntity.status(status).body(err);
     }
+    // Trata erros de validação de negócio ou dados nulos enviados pelo usuário
+    @ExceptionHandler(DadosInvalidosException.class)
+    public ResponseEntity<StandardError> businessError(DadosInvalidosException e, HttpServletRequest request) {
+        String error = "Requisição Inválida";
+        HttpStatus status = HttpStatus.BAD_REQUEST; // Código 400
+
+        String msgAmigavel = "Certifique-se de que todos os campos obrigatórios (Cargo, Ano, Idade,...) foram preenchidos corretamente.";
+
+        StandardError err = new StandardError(
+                Instant.now(),
+                status.value(),
+                error,
+                msgAmigavel, // Aqui virá a mensagem que você escreveu no 'throw'
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(status).body(err);
+    }
+
 }

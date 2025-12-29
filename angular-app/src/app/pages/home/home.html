@@ -8,6 +8,7 @@
           <div class="text-center mb-4">
             <h2 class="fw-bold" style="color: var(--puc-blue)">Estimativa Salarial com Machine Learning</h2>
             <p class="text-muted">Preencha os dados abaixo para consultar o modelo preditivo baseado na RAIS.</p>
+            <p class="text-muted">Somente cargos relacionados ao mercado de TI.</p>
           </div>
 
           <form (ngSubmit)="calcular()" #formSalario="ngForm">
@@ -18,20 +19,31 @@
                 <h5 class="section-title"> <i class="bi bi-briefcase me-2"></i> Perfil Profissional</h5>
 
                 <div class="mb-3">
-                  <label class="form-label">Cargo (CBO)</label>
-                  <input type="text"
-                         class="form-control form-control-lg"
-                         [(ngModel)]="dados.cargo"
-                         name="cargo"
-                         list="opcoes-cargos"
-                         placeholder="Ex: Cientista de dados"
-                         autocomplete="off"
-                         required>
-                  <datalist id="opcoes-cargos">
-                    @for (cargo of listaCargos; track cargo) {
-                      <option [value]="cargo"></option>
+                  <label for="cargoInput" class="form-label fw-bold">Cargo / Ocupação/ CBO</label>
+
+                  <input
+                    type="text"
+                    class="form-control form-control-lg"
+                    id="cargoInput"
+                    name="cargo"
+                    [(ngModel)]="dados.cargo"
+                    list="datalist-cargos"
+                    placeholder="Ex: Analista de desenvolvimento de software"
+                    autocomplete="on"
+                    required>
+
+                  <datalist id="datalist-cargos">
+                    @for (opcao of listaOpcoesVisual; track opcao) {
+                      <option [value]="opcao"></option>
                     }
                   </datalist>
+
+                  <div class="form-text text-muted">
+                    <small>
+                      <i class="bi bi-info-circle"></i>
+                      Aceita nomes de cargo (desenvolvedor de games), nomes oficiais ("Analista de desenvolvimento de sistemas") ou códigos CBO ("2124").
+                    </small>
+                  </div>
                 </div>
 
                 <div class="mb-3">
@@ -136,7 +148,7 @@
               <button type="submit" class="btn btn-puc w-100 py-3 text-uppercase letter-spacing-1" [disabled]="carregando || formSalario.invalid">
                 @if (carregando) {
                   <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                  Processando Modelo de IA...
+                  Processando Modelo ...
                 } @else {
                   <i class="bi bi-calculator me-2"></i> Calcular Estimativa Salarial
                 }

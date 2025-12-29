@@ -1,7 +1,7 @@
 package br.com.leandrocoelho.springapp.service;
 
 import br.com.leandrocoelho.springapp.dto.DadosProfissionalDTO;
-import br.com.leandrocoelho.springapp.dto.PrevisaoSalarioDTO;
+import br.com.leandrocoelho.springapp.dto.ResponsePrevisaoSalarioDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,18 +19,18 @@ public class SalarioService {
     private final RestTemplate restTemplate;
     private final CorrecaoMonetariaService correcaoMonetariaService;
 
-    public PrevisaoSalarioDTO obterEstimativa(DadosProfissionalDTO dados) {
+    public ResponsePrevisaoSalarioDTO obterEstimativa(DadosProfissionalDTO dados) {
         long inicio = System.currentTimeMillis();
-        log.info(">>> [JAVA] Iniciando chamada ao Python para o cargo: {}",dados.cargo());
+        log.info(">>> [JAVA] Iniciando chamada ao Python para o cargo: {}",dados.getCargo());
 
         try {
-            PrevisaoSalarioDTO resposta = restTemplate.postForObject(
+            ResponsePrevisaoSalarioDTO resposta = restTemplate.postForObject(
                     mlApiUrl,
                     dados,
-                    PrevisaoSalarioDTO.class
+                    ResponsePrevisaoSalarioDTO.class
             );
             if(resposta != null){
-                correcaoMonetariaService.aplicarCorrecao(resposta,dados.anoReferencia());
+                correcaoMonetariaService.aplicarCorrecao(resposta,dados.getAnoReferencia());
                 // Log opcional para ver se funcionou
                 log.info(">>> Correção aplicada. Valor Original: {} | Ajustado: {}",
                         resposta.getResultado().getSalarioEstimado(),

@@ -6,3 +6,5 @@ joblib
 scikit-learn
 lightgbm
 pydantic
+pyarrow
+fastparquet

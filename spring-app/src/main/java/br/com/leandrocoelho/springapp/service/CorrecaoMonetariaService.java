@@ -1,6 +1,7 @@
 package br.com.leandrocoelho.springapp.service;
 
-import br.com.leandrocoelho.springapp.dto.PrevisaoSalarioDTO;
+import br.com.leandrocoelho.springapp.dto.ResponseMapaDTO;
+import br.com.leandrocoelho.springapp.dto.ResponsePrevisaoSalarioDTO;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -10,28 +11,48 @@ import java.util.Locale;
 @Service
 public class CorrecaoMonetariaService {
 
-    public void aplicarCorrecao(PrevisaoSalarioDTO previsaoSalarioDTO, int anoReferencia){
-        if(previsaoSalarioDTO == null || previsaoSalarioDTO.getResultado() == null) return;
+    public void aplicarCorrecao(ResponsePrevisaoSalarioDTO responsePrevisaoSalarioDTO, int anoReferencia){
+        if(responsePrevisaoSalarioDTO == null || responsePrevisaoSalarioDTO.getResultado() == null) return;
 
         try{
-            String salarioString = previsaoSalarioDTO.getResultado().getSalarioEstimado();
+            String salarioString = responsePrevisaoSalarioDTO.getResultado().getSalarioEstimado();
             BigDecimal valorOriginal = converterStringParaDecimal(salarioString);
 
             BigDecimal fatorInflacao = obterFatorIPCA(anoReferencia);
 
             BigDecimal valorCorrigido = valorOriginal.multiply(fatorInflacao);
 
-            previsaoSalarioDTO.getResultado().setFatorCorrecao(fatorInflacao);
+            responsePrevisaoSalarioDTO.getResultado().setFatorCorrecao(fatorInflacao);
 
             String salarioCorrigidoStr = formatarMoeda(valorCorrigido);
 
-            previsaoSalarioDTO.getResultado().setSalarioCorrigido(salarioCorrigidoStr);
+            responsePrevisaoSalarioDTO.getResultado().setSalarioCorrigido(salarioCorrigidoStr);
         }catch (Exception e){
-            previsaoSalarioDTO.getResultado().setSalarioEstimado(previsaoSalarioDTO.getResultado().getSalarioEstimado());
-            previsaoSalarioDTO.getResultado().setFatorCorrecao(BigDecimal.ONE);
+            responsePrevisaoSalarioDTO.getResultado().setSalarioEstimado(responsePrevisaoSalarioDTO.getResultado().getSalarioEstimado());
+            responsePrevisaoSalarioDTO.getResultado().setFatorCorrecao(BigDecimal.ONE);
 
         }
 
+    }
+
+    public void aplicarCorrecaoMapa(ResponseMapaDTO item, int anoReferencia) {
+        if (item == null || item.getSalarioEstimado() == null) return;
+
+        try {
+            // No mapa, o salário já vem como Double, facilitando a vida
+            BigDecimal valorOriginal = BigDecimal.valueOf(item.getSalarioEstimado());
+
+            BigDecimal fatorInflacao = obterFatorIPCA(anoReferencia);
+            BigDecimal valorCorrigido = valorOriginal.multiply(fatorInflacao);
+
+            // Setamos os valores no DTO do mapa (certifique-se de que o DTO tenha esses campos)
+            item.setFatorCorrecao(fatorInflacao);
+            item.setSalarioCorrigido(formatarMoeda(valorCorrigido));
+
+        } catch (Exception e) {
+            item.setSalarioCorrigido(formatarMoeda(BigDecimal.valueOf(item.getSalarioEstimado())));
+            item.setFatorCorrecao(BigDecimal.ONE);
+        }
     }
 
     private String formatarMoeda(BigDecimal valorCorrigido) {

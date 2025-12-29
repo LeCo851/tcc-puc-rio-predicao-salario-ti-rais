@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { SalarioService } from '../../salario.service';
 import { DadosProfissional, PrevisaoSalario } from '../../models';
+import {mapaCargos} from '../../data/cargos.const';
 
 @Component({
   selector: 'app-home',
@@ -20,6 +21,7 @@ export class Home {
   erro: string = '';
   resultado: PrevisaoSalario | null = null;
 
+  mapaCargos = mapaCargos;
   // Objeto de Dados do Formulário
   dados: DadosProfissional = {
     ano_referencia: 2024,
@@ -29,7 +31,7 @@ export class Home {
     raca: 'Branca',
     setor: 'Instituições Financeiras (Bancos)',
     sexo: 'Masculino',
-    tamanho_empresa: 'De 50 a 99 funcionários',
+    tamanho_empresa: 'De 100 a 249 funcionários',
     uf: 'SP'
   };
 
@@ -41,41 +43,9 @@ export class Home {
     'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
   ];
 
-  listaAnos: number[] = [2019, 2020, 2021, 2022, 2023, 2024];
+  listaOpcoesVisual : string[] = Object.keys(this.mapaCargos).sort((a, b) => a.localeCompare(b));
 
-  listaCargos: string[] = [
-    "Administrador de banco de dados",
-    "Administrador de redes",
-    "Administrador de sistemas operacionais",
-    "Administrador em segurança da informação",
-    "Analista de desenvolvimento de sistemas",
-    "Analista de pesquisa de mercado",
-    "Analista de redes e de comunicação de dados",
-    "Analista de sistemas de automação",
-    "Analista de suporte computacional",
-    "Analista de testes de tecnologia da informação",
-    "Arquiteto de soluções de tecnologia da informação",
-    "Cientista de dados",
-    "Desenhista industrial gráfico (designer gráfico)",
-    "Desenvolvedor de sistemas de tecnologia da informação (técnico)",
-    "Diretor de tecnologia da informação",
-    "Engenheiro de aplicativos em computação",
-    "Engenheiro de equipamentos em computação",
-    "Engenheiros de sistemas operacionais em computação",
-    "Especialista em pesquisa operacional",
-    "Estatístico",
-    "Estatístico (estatística aplicada)",
-    "Estatístico teórico",
-    "Gerente de infraestrutura de tecnologia da informação",
-    "Gerente de operação de tecnologia da informação",
-    "Gerente de projetos de tecnologia da informação",
-    "Gerente de segurança da informação",
-    "Gerente de suporte técnico de tecnologia da informação",
-    "Pesquisador em ciências da computação e informática",
-    "Professor de computação (no ensino superior)",
-    "Tecnólogo em gestão da tecnologia da informação",
-    "Técnico de suporte ao usuário de tecnologia da informação"
-  ];
+  listaAnos: number[] = [2019, 2020, 2021, 2022, 2023, 2024];
 
   constructor(private service: SalarioService, private cdr: ChangeDetectorRef) {}
 
@@ -94,8 +64,14 @@ export class Home {
     this.resultado = null;
     this.cdr.markForCheck();
 
+    const cargoOficial = this.mapaCargos[this.dados.cargo] || this.dados.cargo;
+
+    const dadosParaEnvio = {
+      ...this.dados,
+      cargo: cargoOficial
+    };
     // 3. Chama Serviço
-    this.service.preverSalario(this.dados).subscribe({
+    this.service.preverSalario(dadosParaEnvio).subscribe({
       next: (res) => {
         this.resultado = res;
         this.carregando = false;
