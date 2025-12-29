@@ -3,22 +3,25 @@ package br.com.leandrocoelho.springapp.service;
 import br.com.leandrocoelho.springapp.dto.DadosProfissionalDTO;
 import br.com.leandrocoelho.springapp.dto.PrevisaoSalarioDTO;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class SalarioService {
 
     @Value("${ml.api.url}") //ler url do app properties
     private String mlApiUrl;
 
     private final RestTemplate restTemplate;
+    private final CorrecaoMonetariaService correcaoMonetariaService;
 
     public PrevisaoSalarioDTO obterEstimativa(DadosProfissionalDTO dados) {
         long inicio = System.currentTimeMillis();
-        System.out.println(">>> [JAVA] Iniciando chamada ao Python...");
+        log.info(">>> [JAVA] Iniciando chamada ao Python para o cargo: {}",dados.cargo());
 
         try {
             PrevisaoSalarioDTO resposta = restTemplate.postForObject(
@@ -26,14 +29,21 @@ public class SalarioService {
                     dados,
                     PrevisaoSalarioDTO.class
             );
+            if(resposta != null){
+                correcaoMonetariaService.aplicarCorrecao(resposta,dados.anoReferencia());
+                // Log opcional para ver se funcionou
+                log.info(">>> Correção aplicada. Valor Original: {} | Ajustado: {}",
+                        resposta.getResultado().getSalarioEstimado(),
+                        resposta.getResultado().getSalarioCorrigido());
+            }
 
-            long fim = System.currentTimeMillis();
-            System.out.println(">>> [JAVA] Resposta recebida em: " + (fim - inicio) + " ms");
+            long tempoTotal = System.currentTimeMillis() - inicio;
+            log.info(">>> Sucesso! Resposta recebidae e processada em {} ms",tempoTotal);
 
             return resposta;
         } catch (Exception e) {
-            long fim = System.currentTimeMillis();
-            System.out.println(">>> [JAVA] Erro após: " + (fim - inicio) + " ms");
+            long tempoTotal = System.currentTimeMillis() - inicio;
+            log.error(">>> Erro na comunicação com IA após {} ms. Causa: {}", tempoTotal, e.getMessage());
             throw e;
         }
     }

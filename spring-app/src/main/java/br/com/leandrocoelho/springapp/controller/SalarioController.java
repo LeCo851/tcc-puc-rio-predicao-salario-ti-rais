@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/salarios")
 @CrossOrigin(origins = "http://localhost:4200")
 @RequiredArgsConstructor
+
 public class SalarioController {
 
     private final SalarioService salarioService;

@@ -1,0 +1,70 @@
+<div class="container my-5 animate__animated animate__fadeIn">
+  <div class="row justify-content-center">
+    <div class="col-lg-10 col-xl-10">
+
+      <div class="card main-card shadow-lg">
+        <div class="card-body p-4 p-md-5">
+
+          <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 pb-3 border-bottom">
+            <div class="mb-3 mb-md-0">
+              <h3 class="fw-bold mb-1" style="color: var(--puc-blue)">
+                <i class="bi bi-geo-alt-fill me-2"></i> Inteligência Geográfica
+              </h3>
+              <p class="text-muted mb-0">Visão distribuída da remuneração no território nacional.</p>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label small text-muted mb-1">Filtrar Cargo</label>
+              <select class="form-select form-select-sm">
+                <option selected>Analista de desenvolvimento de sistemas</option>
+                <option>Cientista de dados</option>
+                <option>Gerente de projetos</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="chart-container text-center bg-light rounded-3 border p-1" style="min-height: 600px; position: relative;">
+
+            @if (erro) {
+
+              <div class="d-flex flex-column align-items-center justify-content-center h-100 py-5">
+                <i class="bi bi-exclamation-triangle-fill text-danger fs-1 mb-3"></i>
+                <h6 class="text-danger fw-bold">{{ erro }}</h6>
+              </div>
+
+            } @else if (!chartOptions) {
+
+              <div class="d-flex flex-column align-items-center justify-content-center h-100 py-5">
+                <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;"></div>
+                <h6 class="text-muted fw-bold">Carregando Topologia do Brasil...</h6>
+                <small class="text-muted">Conectando ao IBGE/Highcharts</small>
+              </div>
+
+            } @else {
+
+              <highcharts-chart
+                [Highcharts]="Highcharts"
+                [constructorType]="'mapChart'"
+                [options]="chartOptions"
+                style="width: 100%; height: 600px; display: block; border-radius: 8px;">
+              </highcharts-chart>
+
+            }
+
+          </div>
+
+          <div class="alert alert-light border mt-4 d-flex align-items-center shadow-sm">
+            <i class="bi bi-info-circle-fill text-primary me-3 fs-4"></i>
+            <div>
+              <small class="text-muted d-block">
+                <strong>Interpretação:</strong> As cores mais escuras (<span style="color: var(--puc-blue)"> Azul PUC</span>) indicam os estados com as maiores médias salariais para o cargo selecionado.
+              </small>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

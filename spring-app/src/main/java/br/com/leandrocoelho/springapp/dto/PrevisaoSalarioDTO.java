@@ -1,28 +1,52 @@
 package br.com.leandrocoelho.springapp.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-public record PrevisaoSalarioDTO(
-        @JsonProperty("resultado") ResultadoDTO resultado,
-        @JsonProperty("status") String status
+@Data // Gera Getters, Setters, toString, etc.
+@AllArgsConstructor
+@NoArgsConstructor
+public class PrevisaoSalarioDTO {
 
-) {
-    public record ResultadoDTO(
-            @JsonProperty("cargo_selecionado")
-            String cargoSelecionado,
+    @JsonProperty("resultado")
+    private ResultadoDTO resultado;
 
-            @JsonProperty("salario_estimado")
-            String salarioEstimado,
+    @JsonProperty("status")
+    private String status;
 
-            @JsonProperty("detalhes_perfil")
-            DetalhesPerfilDTO detalhesPerfil
+    // --- CLASSES INTERNAS (TAMBÉM DEVEM SER CLASSES) ---
 
-    ){}
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ResultadoDTO {
+        @JsonProperty("cargo_selecionado")
+        private String cargoSelecionado;
 
-    public record DetalhesPerfilDTO(
-            @JsonProperty("porte_empresa")
-            String porteEmpresa,
-            @JsonProperty("setor_atuacao")
-            String setorAtuacao
-    ){}
+        @JsonProperty("salario_estimado")
+        private String salarioEstimado;
+
+        // Este campo será preenchido pelo Java depois
+        @JsonProperty("salario_corrigido")
+        private String salarioCorrigido;
+
+        @JsonProperty("fator_correcao")
+        private java.math.BigDecimal fatorCorrecao;
+
+        @JsonProperty("detalhes_perfil")
+        private DetalhesPerfilDTO detalhesPerfil;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class DetalhesPerfilDTO {
+        @JsonProperty("porte_empresa")
+        private String porteEmpresa;
+
+        @JsonProperty("setor_atuacao")
+        private String setorAtuacao;
+    }
 }

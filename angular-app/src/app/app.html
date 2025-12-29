@@ -1,137 +1,44 @@
-<div class="container mt-5 mb-5">
-  <div class="card shadow">
-    <div class="card-header bg-primary text-white">
-      <h3>💰 Predição Salarial TI - TCC</h3>
-    </div>
-    sistemas
-    <div class="card-body">
-      <form (ngSubmit)="calcular()">
+<nav class="navbar navbar-puc">
+  <div class="container">
+    <div class="d-flex align-items-center">
 
-        <div class="row mb-3">
-          <div class="col-md-8">
-            <label class="form-label">Cargo</label>
+      <img src="logo.jpg"
+           alt="Logo PUC-Rio"
+           height="55"
+           width="55"
+           class="me-3 bg-white rounded-circle p-1">
 
-            <input type="text"
-                   class="form-control"
-                   [(ngModel)]="dados.cargo"
-                   name="cargo"
-                   list="opcoes-cargos"
-                   placeholder="Comece a digitar..."
-                   autocomplete="off">
-
-            <datalist id="opcoes-cargos">
-              <option *ngFor="let cargo of listaCargos" [value]="cargo"></option>
-            </datalist>
-
-            <small class="text-muted">Selecione uma opção da lista.</small>
-          </div>
-          <div class="col-md-4">
-            <label class="form-label">Idade</label>
-            <input type="number" class="form-control" [(ngModel)]="dados.idade" name="idade">
-          </div>
-        </div>
-
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <label class="form-label">Escolaridade</label>
-            <select class="form-select" [(ngModel)]="dados.escolaridade" name="escolaridade">
-              <option value="Médio Completo">Médio Completo</option>
-              <option value="Superior Incompleto">Superior Incompleto</option>
-              <option value="Superior Completo">Superior Completo</option>
-              <option value="Mestrado">Mestrado</option>
-              <option value="Doutorado">Doutorado</option>
-            </select>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label">Tamanho da Empresa</label>
-            <select class="form-select" [(ngModel)]="dados.tamanho_empresa" name="tamanho">
-              <option value="Zero funcionários">Zero funcionários</option>
-              <option value="De 1 a 4 funcionários">De 1 a 4 funcionários</option>
-              <option value="De 5 a 9 funcionários">De 5 a 9 funcionários</option>
-              <option value="De 10 a 19 funcionários">De 10 a 19 funcionários</option>
-              <option value="De 20 a 49 funcionários">De 20 a 49 funcionários</option>
-              <option value="De 50 a 99 funcionários">De 50 a 99 funcionários</option>
-              <option value="De 100 a 249 funcionários">De 100 a 249 funcionários</option>
-              <option value="De 250 a 499 funcionários">De 250 a 499 funcionários</option>
-              <option value="De 500 a 999 funcionários">De 500 a 999 funcionários</option>
-              <option value="1000 ou mais funcionários">1000 ou mais funcionários</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="row mb-3">
-          <div class="col-md-12">
-            <label class="form-label">Setor de Atuação</label>
-            <select class="form-select" [(ngModel)]="dados.setor" name="setor">
-              <option value="Instituições Financeiras (Bancos)">Instituições Financeiras (Bancos)</option>
-              <option value="Comércio Varejista">Comércio Varejista</option>
-              <option value="Comércio Atacadista">Comércio Atacadista</option>
-              <option value="Indústria Têxtil">Indústria Têxtil</option>
-              <option value="Indústria Química">Indústria Química</option>
-              <option value="Construção Civil">Construção Civil</option>
-              <option value="Serviços de Utilidade Pública">Serviços de Utilidade Pública</option>
-              <option value="Transportes e Comunicações">Transportes e Comunicações</option>
-              <option value="Administração Pública">Administração Pública</option>
-              <option value="Ensino">Ensino</option>
-              <option value="Médicos, Odontológicos e Veterinários">Médicos, Odontológicos e Veterinários</option>
-              <option value="Alojamento e Alimentação">Alojamento e Alimentação</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="row mb-3">
-          <div class="col-md-3">
-            <label class="form-label">Sexo</label>
-            <select class="form-select" [(ngModel)]="dados.sexo" name="sexo">
-              <option value="Masculino">Masculino</option>
-              <option value="Feminino">Feminino</option>
-            </select>
-          </div>
-
-          <div class="col-md-3">
-            <label class="form-label">Raça/Cor</label>
-            <select class="form-select" [(ngModel)]="dados.raca" name="raca">
-              <option value="Branca">Branca</option>
-              <option value="Preta">Preta</option>
-              <option value="Parda">Parda</option>
-              <option value="Amarela">Amarela</option>
-              <option value="Indígena">Indígena</option>
-              <option value="Não Informado">Não Informado</option>
-            </select>
-          </div>
-
-          <div class="col-md-3">
-            <label class="form-label">Estado (UF)</label>
-            <input type="text" class="form-control" [(ngModel)]="dados.uf" name="uf" maxlength="2" style="text-transform: uppercase;">
-          </div>
-
-          <div class="col-md-3">
-            <label class="form-label">Ano Referência</label>
-            <input type="number" class="form-control" [(ngModel)]="dados.ano_referencia" name="ano">
-          </div>
-        </div>
-
-        <button type="submit" class="btn btn-success w-100 py-2" [disabled]="carregando">
-          <span *ngIf="carregando" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-
-          <span *ngIf="!carregando">Calcular Salário</span>
-          <span *ngIf="carregando">Processando Inteligência Artificial...</span>
-        </button>
-
-      </form>
-
-      <div *ngIf="resultado" class="alert alert-success text-center mt-4 shadow-sm">
-        <h5 class="text-muted mb-1">Estimativa Salarial</h5>
-        <h1 class="display-3 fw-bold text-success">{{ resultado.resultado.salario_estimado }}</h1>
-        <hr>
-        <p class="mb-0"><strong>Cargo:</strong> {{ resultado.resultado.cargo_selecionado }}</p>
-        <p class="small text-muted mb-0">{{ resultado.resultado.detalhes_perfil.porte_empresa }} - {{ resultado.resultado.detalhes_perfil.setor_atuacao }}</p>
+      <div class="brand-text d-flex flex-column">
+        <span class="course-title">MBA em Data Science & Big Data</span>
+        <span class="student-name">Aluno: Leandro Coelho</span>
       </div>
-
-      <div *ngIf="erro" class="alert alert-danger mt-4 text-center">
-        <strong>Ops!</strong> {{ erro }}
-      </div>
-
     </div>
+
+    <div class="d-flex gap-3">
+      <a routerLink="/"
+         class="btn btn-sm btn-outline-light border-0"
+         routerLinkActive="active-link"
+         [routerLinkActiveOptions]="{exact: true}">
+        <i class="bi bi-calculator me-1"></i> Predição
+      </a>
+
+      <a routerLink="/dashboard"
+         class="btn btn-sm btn-outline-light border-0"
+         routerLinkActive="active-link">
+        <i class="bi bi-map me-1"></i> Mapa Brasil
+      </a>
+    </div>
+
   </div>
-</div>
+</nav>
+
+<router-outlet></router-outlet>
+
+
+<footer class="footer-puc text-center">
+  <div class="container">
+    <p class="mb-1"><strong>Pontifícia Universidade Católica do Rio de Janeiro</strong></p>
+    <p class="mb-0">Projeto de TCC - MBA em Data Science & Big Data</p>
+    <small class="text-muted">Desenvolvido por Leandro Coelho &copy; 2025</small>
+  </div>
+</footer>

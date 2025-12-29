@@ -1,0 +1,204 @@
+<div class="container my-5 animate__animated animate__fadeIn">
+  <div class="row justify-content-center">
+    <div class="col-lg-10 col-xl-9">
+
+      <div class="card main-card shadow-lg">
+        <div class="card-body p-4 p-md-5">
+
+          <div class="text-center mb-4">
+            <h2 class="fw-bold" style="color: var(--puc-blue)">Estimativa Salarial com Machine Learning</h2>
+            <p class="text-muted">Preencha os dados abaixo para consultar o modelo preditivo baseado na RAIS.</p>
+          </div>
+
+          <form (ngSubmit)="calcular()" #formSalario="ngForm">
+
+            <div class="row g-4">
+
+              <div class="col-md-12 col-lg-6">
+                <h5 class="section-title"> <i class="bi bi-briefcase me-2"></i> Perfil Profissional</h5>
+
+                <div class="mb-3">
+                  <label class="form-label">Cargo (CBO)</label>
+                  <input type="text"
+                         class="form-control form-control-lg"
+                         [(ngModel)]="dados.cargo"
+                         name="cargo"
+                         list="opcoes-cargos"
+                         placeholder="Ex: Cientista de dados"
+                         autocomplete="off"
+                         required>
+                  <datalist id="opcoes-cargos">
+                    @for (cargo of listaCargos; track cargo) {
+                      <option [value]="cargo"></option>
+                    }
+                  </datalist>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Setor de Atuação</label>
+                  <select class="form-select" [(ngModel)]="dados.setor" name="setor">
+                    <option value="Instituições Financeiras (Bancos)">Instituições Financeiras (Bancos)</option>
+                    <option value="Comércio Varejista">Comércio Varejista</option>
+                    <option value="Comércio Atacadista">Comércio Atacadista</option>
+                    <option value="Indústria Têxtil">Indústria Têxtil</option>
+                    <option value="Indústria Química">Indústria Química</option>
+                    <option value="Construção Civil">Construção Civil</option>
+                    <option value="Serviços de Utilidade Pública">Serviços de Utilidade Pública</option>
+                    <option value="Transportes e Comunicações">Transportes e Comunicações</option>
+                    <option value="Administração Pública">Administração Pública</option>
+                    <option value="Ensino">Ensino</option>
+                    <option value="Médicos, Odontológicos e Veterinários">Médicos, Odontológicos e Veterinários</option>
+                    <option value="Alojamento e Alimentação">Alojamento e Alimentação</option>
+                  </select>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label">Porte da Empresa</label>
+                  <select class="form-select" [(ngModel)]="dados.tamanho_empresa" name="tamanho">
+                    <option value="Zero funcionários">Zero funcionários</option>
+                    <option value="De 1 a 4 funcionários">De 1 a 4 funcionários</option>
+                    <option value="De 5 a 9 funcionários">De 5 a 9 funcionários</option>
+                    <option value="De 10 a 19 funcionários">De 10 a 19 funcionários</option>
+                    <option value="De 20 a 49 funcionários">De 20 a 49 funcionários</option>
+                    <option value="De 50 a 99 funcionários">De 50 a 99 funcionários</option>
+                    <option value="De 100 a 249 funcionários">De 100 a 249 funcionários</option>
+                    <option value="De 250 a 499 funcionários">De 250 a 499 funcionários</option>
+                    <option value="De 500 a 999 funcionários">De 500 a 999 funcionários</option>
+                    <option value="1000 ou mais funcionários">1000 ou mais funcionários</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="col-md-12 col-lg-6">
+                <h5 class="section-title"> <i class="bi bi-person me-2"></i> Dados Demográficos</h5>
+
+                <div class="row">
+                  <div class="col-6 mb-3">
+                    <label class="form-label">Idade</label>
+                    <input type="number" class="form-control" [(ngModel)]="dados.idade" name="idade" min="16" max="70" required #idadeInput="ngModel">
+                    @if (idadeInput.invalid && (idadeInput.dirty || idadeInput.touched)) {
+                      <div class="text-danger small mt-1">Inválido (16-70)</div>
+                    }
+                  </div>
+
+                  <div class="col-6 mb-3">
+                    <label class="form-label">Escolaridade</label>
+                    <select class="form-select" [(ngModel)]="dados.escolaridade" name="escolaridade">
+                      <option value="Médio Completo">Médio Completo</option>
+                      <option value="Superior Incompleto">Superior Incompleto</option>
+                      <option value="Superior Completo">Superior Completo</option>
+                      <option value="Mestrado">Mestrado</option>
+                      <option value="Doutorado">Doutorado</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-6 mb-3">
+                    <label class="form-label">Sexo</label>
+                    <select class="form-select" [(ngModel)]="dados.sexo" name="sexo">
+                      <option value="Masculino">Masculino</option>
+                      <option value="Feminino">Feminino</option>
+                    </select>
+                  </div>
+                  <div class="col-6 mb-3">
+                    <label class="form-label">Raça/Cor</label>
+                    <select class="form-select" [(ngModel)]="dados.raca" name="raca">
+                      <option value="Branca">Branca</option>
+                      <option value="Preta">Preta</option>
+                      <option value="Parda">Parda</option>
+                      <option value="Amarela">Amarela</option>
+                      <option value="Indígena">Indígena</option>
+                      <option value="Não Informado">Não Informado</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-6 mb-3">
+                    <label class="form-label">Estado (UF)</label>
+                    <select class="form-select" [(ngModel)]="dados.uf" name="uf">
+                      @for (uf of listaUfs; track uf) { <option [value]="uf">{{ uf }}</option> }
+                    </select>
+                  </div>
+                  <div class="col-6 mb-3">
+                    <label class="form-label">Ano Ref.</label>
+                    <select class="form-select" [(ngModel)]="dados.ano_referencia" name="ano">
+                      @for (ano of listaAnos; track ano) { <option [value]="ano">{{ ano }}</option> }
+                    </select>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-top">
+              <button type="submit" class="btn btn-puc w-100 py-3 text-uppercase letter-spacing-1" [disabled]="carregando || formSalario.invalid">
+                @if (carregando) {
+                  <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  Processando Modelo de IA...
+                } @else {
+                  <i class="bi bi-calculator me-2"></i> Calcular Estimativa Salarial
+                }
+              </button>
+            </div>
+
+          </form>
+
+          @if (resultado) {
+            <div class="result-box p-4 mt-5 shadow-sm text-center animate__animated animate__fadeIn">
+
+              <h6 class="text-uppercase text-muted fw-bold mb-4">Análise de Mercado & Correção</h6>
+
+              <div class="row align-items-center">
+                <div class="col-md-6 border-end">
+                  <small class="text-muted d-block mb-1 text-uppercase ls-1">Base Histórica (RAIS)</small>
+                  <h2 class="fw-bold text-secondary mb-0">{{ resultado.resultado.salario_estimado }}</h2>
+                  <small class="text-muted" style="font-size: 0.75rem">Ano Ref: {{ dados.ano_referencia }}</small>
+                </div>
+
+                <div class="col-md-6 mt-3 mt-md-0">
+                  <div class="d-inline-block px-3 py-1 rounded-pill bg-light mb-2 shadow-sm">
+                    <small class="text-primary fw-bold">
+                      <i class="bi bi-graph-up-arrow me-1"></i> Ajustado p/ Hoje
+                    </small>
+                  </div>
+                  <h2 class="display-6 fw-bold mb-0" style="color: var(--puc-blue)">
+                    {{ resultado.resultado.salario_corrigido }}
+                  </h2>
+                  <div class="mt-2">
+                    <small class="text-muted" style="font-size: 0.75rem">
+                      <span class="badge bg-secondary opacity-75 me-1">
+                        Fator: {{ resultado.resultado.fator_correcao }}x
+                      </span>
+                      IPCA Acumulado ({{ dados.ano_referencia }}-2025)
+                    </small>
+                  </div>
+                </div>
+              </div>
+
+              <hr class="my-4 opacity-25">
+
+              <div class="badge bg-secondary mb-3 px-3 py-2 text-uppercase letter-spacing-1">
+                {{ resultado.resultado.cargo_selecionado }}
+              </div>
+
+              <p class="text-muted small mb-0 px-md-5">
+                Perfil: <strong>{{ resultado.resultado.detalhes_perfil.porte_empresa }}</strong> —
+                <strong>{{ resultado.resultado.detalhes_perfil.setor_atuacao }}</strong>
+              </p>
+            </div>
+          }
+
+          @if (erro) {
+            <div class="alert alert-danger mt-4 d-flex align-items-center" role="alert">
+              <i class="bi bi-exclamation-triangle-fill me-3 fs-4"></i>
+              <div>{{ erro }}</div>
+            </div>
+          }
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

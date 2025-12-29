@@ -1,1 +1,27 @@
 /* You can add global styles to this file, and also import other style files */
+/* src/styles.css - Estilos Globais */
+
+/* Import da fonte */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+:root {
+  --puc-blue: #003865;
+  --puc-dark-blue: #002545;
+  --text-dark: #333333;
+  --text-light: #f8f9fa;
+}
+
+/* AQUI ESTÁ A MÁGICA: Pintamos o corpo do site */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--puc-blue); /* Fundo Azul */
+  /* Gradiente opcional para ficar elegante */
+  background-image: linear-gradient(180deg, var(--puc-blue) 0%, var(--puc-dark-blue) 100%);
+  background-attachment: fixed;
+  font-family: 'Roboto', sans-serif;
+}
