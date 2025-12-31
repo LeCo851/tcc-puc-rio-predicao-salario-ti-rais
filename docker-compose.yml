@@ -1,24 +1,30 @@
 version: '3.8'
 
 services:
-  # --- API PYTHON (ML) ---
-  api-python:
-    # Aponta para a pasta onde está o Dockerfile do Python
-    build: ./ml-api
-
-    container_name: tcc-ml-api
-
-    # IMPORTANTE: Usamos 'python -m' para garantir que ache o uvicorn no Linux
-    command: python -m uvicorn app:app --host 0.0.0.0 --port 8000
-
-    # Mapeia a porta 8000 do container para a 8000 do seu PC
+  # Serviço 1: API Python (Machine Learning)
+  ml-api:
+    build: ./ml-api  # Caminho para a pasta do Python
+    container_name: ml-api-container
     ports:
       - "8000:8000"
-
     networks:
-      - tcc-network
+      - minha-rede-tcc
 
-# Cria a rede (mesmo com 1 serviço, é bom manter para quando adicionar o Java)
+  # Serviço 2: Backend Java (Spring Boot)
+  spring-app:
+    build: ./spring-app # Caminho para a pasta do Java
+    container_name: spring-app-container
+    ports:
+      - "8080:8080"
+    environment:
+      # AQUI ESTÁ A MÁGICA:
+      # Em vez de 'localhost', usamos o NOME DO SERVIÇO do Python ('ml-api')
+      - ML_API_URL=http://ml-api:8000/predict
+    depends_on:
+      - ml-api
+    networks:
+      - minha-rede-tcc
+
 networks:
-  tcc-network:
+  minha-rede-tcc:
     driver: bridge
