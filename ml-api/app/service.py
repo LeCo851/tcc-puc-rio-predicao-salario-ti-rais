@@ -44,7 +44,7 @@ class SalarioService:
     def _carregar_dados_rais(self):
         """Carrega a base Parquet para estatísticas e calcula quartis globais."""
         diretorio_base = os.path.dirname(os.path.abspath(__file__))
-        caminho_parquet = os.path.join(diretorio_base, 'dados_rais_brutos.parquet')
+        caminho_parquet = os.path.join(diretorio_base, 'dados_rais_lite.parquet')
         
         # Colunas estritamente necessárias (Economia de Memória)
         cols = ['cbo_2002', 'sigla_uf', 'ano', 'sexo', 'idade']
