@@ -7,14 +7,14 @@ Este projeto é parte do Trabalho de Conclusão de Curso (TCC) do MBA em Data Sc
 O projeto segue uma arquitetura de microsserviços composta por três camadas principais:
 
 1.  **angular-app (Frontend):**
-    *   Interface web desenvolvida em Angular 17+.
+    *   Interface web desenvolvida em Angular 21+.
     *   **Predição:** Formulário inteligente para estimativa salarial personalizada.
     *   **Dashboard:** Mapa interativo do Brasil (Highmaps) para visualização de médias salariais por estado.
     *   **Sobre:** Documentação técnica integrada sobre a metodologia e desafios do projeto.
     *   Consome a API do backend (`spring-app`).
 
 2.  **spring-app (Backend):**
-    *   API REST desenvolvida em Java com Spring Boot 3.
+    *   API REST desenvolvida em Java com Spring Boot 4.
     *   Atua como middleware e gateway de segurança.
     *   **Correção Monetária:** Aplica o índice IPCA para atualizar valores históricos.
     *   Recebe as requisições do frontend, valida os dados e repassa para o serviço de ML.
@@ -27,7 +27,7 @@ O projeto segue uma arquitetura de microsserviços composta por três camadas pr
 ## 🚀 Tecnologias Utilizadas
 
 *   **Frontend Web:**
-    *   Angular 17+
+    *   Angular 21+
     *   TypeScript
     *   Highcharts & Highmaps (Visualização de Dados)
     *   Bootstrap 5 (UI/UX)
@@ -35,7 +35,7 @@ O projeto segue uma arquitetura de microsserviços composta por três camadas pr
 
 *   **Backend Java:**
     *   Java 17+
-    *   Spring Boot 3.x
+    *   Spring Boot 4.x
     *   Maven
     *   Lombok
 
