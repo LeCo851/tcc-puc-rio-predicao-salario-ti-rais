@@ -13,7 +13,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="API de Predição Salarial - TCC",
-    description="API para prever salários de TI usando XGBoost e dados da RAIS",
+    description="API para prever salários de TI usando LightGBM e dados da RAIS",
     version="2.0",
     lifespan=lifespan
 )
