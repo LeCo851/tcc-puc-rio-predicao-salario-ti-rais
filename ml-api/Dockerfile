@@ -3,25 +3,29 @@ FROM python:3.11-slim
 # Define o diretório de trabalho principal
 WORKDIR /app
 
-# Instala dependências do sistema (libgomp1 é necessária para o XGBoost/LightGBM)
+# Instala dependências do sistema
 RUN apt-get update && apt-get install -y \
     libgomp1 \
     && rm -rf /var/lib/apt/lists/*
 
-# 1. Copia o requirements primeiro para aproveitar o cache das camadas do Docker
+# --- AJUSTE DE SEGURANÇA DE MEMÓRIA ---
+# Isso impede que o Python "fragmente" a memória e estoure os 512MB
+ENV MALLOC_ARENA_MAX=2
+# Isso impede que bibliotecas como Numpy/Pandas tentem usar todos os cores (o que gasta mais RAM)
+ENV OMP_NUM_THREADS=1
+
+# 1. Copia o requirements
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 2. Copia todo o conteúdo da sua pasta local 'app' para a pasta 'app' no container
-# Isso já levará o app.py, service.py, enums.py, mappings.py, schemas.py, 
-# o modelo .pkl e o arquivo .parquet de uma vez.
+# 2. Copia a pasta app
 COPY ./app ./app
 
-# 3. Muda o diretório de trabalho para dentro da pasta onde está o app.py
+# 3. Muda o diretório
 WORKDIR /app/app
 
-# Expõe a porta que o Uvicorn vai usar
+# Expõe a porta
 EXPOSE 8000
 
-# Executa o comando usando o módulo uvicorn
+# Executa
 CMD ["python", "-m", "uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
