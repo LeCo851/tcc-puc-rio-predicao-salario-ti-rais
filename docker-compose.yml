@@ -20,6 +20,7 @@ services:
       # AQUI ESTÁ A MÁGICA:
       # Em vez de 'localhost', usamos o NOME DO SERVIÇO do Python ('ml-api')
       - ML_API_URL=http://ml-api:8000/predict
+      - ML_API_URL_MAPA=http://ml-api:8000/analise/mapa
     depends_on:
       - ml-api
     networks:

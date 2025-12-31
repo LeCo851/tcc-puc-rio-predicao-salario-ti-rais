@@ -89,11 +89,11 @@ export class Dashboard implements OnInit {
     const cargoOficial = mapaCargos[this.cargoSelecionado] || this.cargoSelecionado;
     const filtros = {
       cargo: cargoOficial,
-      ano_referencia: Number(this.anoSelecionado),
-      faixa_experiencia: this.faixaSelecionada || null,
+      anoReferencia: Number(this.anoSelecionado),
+      faixaExperiencia: this.faixaSelecionada || null,
       idade: this.faixaSelecionada ? null : this.idadeManual,
       escolaridade: this.escolaridadeSelecionada,
-      tamanho_empresa: this.tamanhoEmpresaSelecionado,
+      tamanhoEmpresa: this.tamanhoEmpresaSelecionado,
       setor: this.setorSelecionado,
       sexo: 'Masculino',
       raca: 'Branca'

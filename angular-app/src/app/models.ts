@@ -1,14 +1,14 @@
 export interface DadosProfissional {
   cargo: string;
   idade: number | null;
-  faixa_experiencia?: string;
+  faixaExperiencia?: string;
   escolaridade: string;
   uf: string;
   sexo: string;
   raca: string;
-  tamanho_empresa: string;
+  tamanhoEmpresa: string;
   setor: string;
-  ano_referencia: number;
+  anoReferencia: number;
 }
 export interface DetalhesPerfil {
 

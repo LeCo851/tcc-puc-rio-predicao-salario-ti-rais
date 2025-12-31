@@ -31,16 +31,16 @@ export class Home {
 
   // Objeto de Dados do Formulário (Valores Padrão)
   dados: DadosProfissional = {
-    ano_referencia: 2024,
+    anoReferencia: 2024,
     cargo: 'Analista de desenvolvimento de sistemas',
     escolaridade: 'Superior Completo',
     idade: 30, // Valor padrão visual para o input manual
     raca: 'Branca',
     setor: 'Instituiçoes de crédito, seguros e capitalizaçao',
     sexo: 'Masculino',
-    tamanho_empresa: 'De 100 a 249 funcionários',
+    tamanhoEmpresa: 'De 100 a 249 funcionários',
     uf: 'SP',
-    faixa_experiencia: undefined // Começa indefinido
+    faixaExperiencia: undefined // Começa indefinido
   };
 
   // --- LISTAS PARA OS DROPDOWNS ---
@@ -94,7 +94,7 @@ export class Home {
       // Lógica Híbrida:
       // Se tem senioridade, manda ela e idade null.
       // Se não tem senioridade, manda idade e faixa null.
-      faixa_experiencia: this.senioridadeSelecionada || undefined,
+      faixaExperiencia: this.senioridadeSelecionada || undefined,
       idade: this.senioridadeSelecionada ? null : this.dados.idade
     };
 

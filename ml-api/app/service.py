@@ -2,6 +2,7 @@ import os
 import joblib
 import pandas as pd
 import numpy as np
+import duckdb
 from mappings import mapa_escolaridade, mapa_tamanho, mapa_setor, mapa_sexo, mapa_raca
 
 class SalarioService:
@@ -13,12 +14,14 @@ class SalarioService:
         self.mapa_medias = None
         self.media_global = None
         self.nome_para_cbo = None
-        self.df_rais = None
+        
+        # Substitui o self.df_rais (memória) pelo caminho do arquivo (disco)
+        self.caminho_parquet = None 
         
         # O MAPA DE FALLBACK AGORA É CALCULADO NO STARTUP
         self.mapa_fallback = {} 
 
-        # Sequência de Inicialização
+        # Sequência de Inicialização (Nomes originais mantidos)
         self._carregar_modelo()
         self._carregar_dados_rais()
 
@@ -35,115 +38,104 @@ class SalarioService:
             self.mapa_medias = pacote.get('mapa_medias', {})
             self.media_global = pacote.get('media_global', 3000.0)
             
-            # Inverte o mapa CBO para busca por nome
             self.nome_para_cbo = {str(v).strip(): str(k) for k, v in self.cbo_map.items()}
             print("[OK] Modelo ML carregado com sucesso.")
         except Exception as e:
             raise RuntimeError(f"Falha crítica ao carregar modelo: {e}")
 
     def _carregar_dados_rais(self):
-        """Carrega a base Parquet para estatísticas e calcula quartis globais."""
+        """
+        Nome antigo mantido.
+        Mas em vez de carregar Pandas na RAM, apenas localiza o arquivo para o DuckDB.
+        """
         diretorio_base = os.path.dirname(os.path.abspath(__file__))
-        caminho_parquet = os.path.join(diretorio_base, 'dados_rais_lite.parquet')
         
-        # Colunas estritamente necessárias (Economia de Memória)
-        cols = ['cbo_2002', 'sigla_uf', 'ano', 'sexo', 'idade']
-        
-        try:
-            if os.path.exists(caminho_parquet):
-                print(f"[INIT] Carregando Parquet: {caminho_parquet}...")
-                self.df_rais = pd.read_parquet(caminho_parquet, columns=cols)
-                
-                # Otimização de tipos
-                self.df_rais['cbo_2002'] = self.df_rais['cbo_2002'].astype('category')
-                self.df_rais['sigla_uf'] = self.df_rais['sigla_uf'].astype('category')
-                self.df_rais['ano'] = self.df_rais['ano'].astype('int16')
-                self.df_rais['sexo'] = self.df_rais['sexo'].astype('int8')
-                self.df_rais['idade'] = self.df_rais['idade'].astype('int8')
-                
-                print(f"[OK] Base RAIS carregada: {len(self.df_rais)} registros.")
-                
-                # --- CALCULA O FALLBACK DINAMICAMENTE ---
-                self._calcular_quartis_globais()
-                
-            else:
-                print("[WARN] Arquivo Parquet não encontrado. Estatísticas dinâmicas desativadas.")
-                self.df_rais = pd.DataFrame(columns=cols)
-                # Fallback de emergência (Hardcoded)
-                self.mapa_fallback = {"JUNIOR": 25, "PLENO": 30, "SENIOR": 38, "ESPECIALISTA": 45}
+        # TENTA ACHAR O ARQUIVO CORRETO (Prioridade para o arquivo de TCC/Amostra)
+        opcoes = ['dados_rais_amostra.parquet', 'dados_rais_lite.parquet', 'dados_rais_tcc.parquet']
+        self.caminho_parquet = None
 
-        except Exception as e:
-            print(f"[ERROR] Erro ao ler Parquet: {e}")
-            self.df_rais = pd.DataFrame(columns=cols)
+        for nome in opcoes:
+            caminho = os.path.join(diretorio_base, nome)
+            if os.path.exists(caminho):
+                self.caminho_parquet = caminho
+                break
+        
+        if self.caminho_parquet:
+            print(f"[INIT] Parquet encontrado para DuckDB: {self.caminho_parquet}")
+            self._calcular_quartis_globais()
+        else:
+            print("[CRITICAL WARN] NENHUM Arquivo Parquet encontrado! O Mapa virá vazio.")
+            self.mapa_fallback = {"JUNIOR": 25, "PLENO": 30, "SENIOR": 38, "ESPECIALISTA": 45}
 
     def _calcular_quartis_globais(self):
-        """
-        Calcula os quartis da base INTEIRA assim que o sistema sobe.
-        Serve como 'Plano B' se um cargo específico tiver poucos dados.
-        """
+        """Calcula quartis globais via SQL direto no disco."""
         try:
-            if not self.df_rais.empty:
-                # Filtra idades válidas (18 a 80)
-                df_valido = self.df_rais[(self.df_rais['idade'] >= 18) & (self.df_rais['idade'] <= 80)]
-                
-                stats = df_valido['idade'].describe(percentiles=[0.25, 0.50, 0.75, 0.90])
-                
+            query = f"""
+                SELECT 
+                    PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY idade) as q25,
+                    PERCENTILE_CONT(0.50) WITHIN GROUP (ORDER BY idade) as q50,
+                    PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY idade) as q75,
+                    PERCENTILE_CONT(0.90) WITHIN GROUP (ORDER BY idade) as q90
+                FROM '{self.caminho_parquet}'
+                WHERE idade BETWEEN 18 AND 80
+            """
+            resultado = duckdb.sql(query).fetchone()
+            
+            if resultado:
                 self.mapa_fallback = {
-                    "JUNIOR": int(stats['25%']),
-                    "PLENO": int(stats['50%']),
-                    "SENIOR": int(stats['75%']),
-                    "ESPECIALISTA": int(stats['90%'])
+                    "JUNIOR": int(resultado[0]),
+                    "PLENO": int(resultado[1]),
+                    "SENIOR": int(resultado[2]),
+                    "ESPECIALISTA": int(resultado[3])
                 }
-                print(f"[STATS] Quartis Globais Calculados (Fallback): {self.mapa_fallback}")
+                print(f"[STATS] Quartis Globais (DuckDB): {self.mapa_fallback}")
             else:
-                raise ValueError("DataFrame vazio")
+                raise ValueError("Query retornou vazio")
+
         except Exception as e:
-            print(f"[WARN] Erro ao calcular stats globais: {e}. Usando valores padrão.")
+            print(f"[WARN] Erro ao calcular stats globais: {e}. Usando padrão.")
             self.mapa_fallback = {"JUNIOR": 27, "PLENO": 32, "SENIOR": 40, "ESPECIALISTA": 47}
 
     def _resolver_idade(self, cargo_nome, ano, idade_manual, faixa_experiencia):
-        """
-        Lógica Inteligente de Idade:
-        1. Se tem Faixa -> Tenta calcular estatística ESPECÍFICA (Cargo + Ano).
-           Se não tiver amostra suficiente (>100), usa a GLOBAL (self.mapa_fallback).
-        2. Se não tem Faixa -> Usa Idade Manual ou Padrão (32).
-        """
-        # Se não tem faixa, usa a idade manual ou a mediana global (Plano C)
+        """Lógica de Idade via DuckDB (Filtra Cargo + Ano no disco)."""
         if faixa_experiencia is None:
             return idade_manual if idade_manual is not None else self.mapa_fallback.get("PLENO", 32)
 
-        # Tenta calcular estatística ESPECÍFICA DO CARGO
         cbo_codigo = self.nome_para_cbo.get(cargo_nome)
-        idade_final = None
-
-        if cbo_codigo and not self.df_rais.empty:
+        
+        if cbo_codigo and self.caminho_parquet and os.path.exists(self.caminho_parquet):
             cbo_limpo = str(cbo_codigo).replace('-', '').strip()
             
-            # Filtro por Cargo e Ano
-            filtro = (self.df_rais['cbo_2002'].astype(str).str.replace('-', '') == cbo_limpo) & \
-                     (self.df_rais['ano'] == ano)
-            
-            df_filtrado = self.df_rais[filtro]
-            
-            # Se tiver amostra relevante (> 100 registros), confiamos na estatística específica
-            if len(df_filtrado) >= 100:
-                stats = df_filtrado['idade'].describe(percentiles=[0.25, 0.50, 0.75, 0.90])
-                match faixa_experiencia:
-                    case "JUNIOR": idade_final = int(stats['25%'])
-                    case "PLENO": idade_final = int(stats['50%'])
-                    case "SENIOR": idade_final = int(stats['75%'])
-                    case "ESPECIALISTA": idade_final = int(stats['90%'])
+            try:
+                # Query com filtro de ANO
+                query = f"""
+                    SELECT 
+                        COUNT(*) as total,
+                        PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY idade) as q25,
+                        PERCENTILE_CONT(0.50) WITHIN GROUP (ORDER BY idade) as q50,
+                        PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY idade) as q75,
+                        PERCENTILE_CONT(0.90) WITHIN GROUP (ORDER BY idade) as q90
+                    FROM '{self.caminho_parquet}'
+                    WHERE replace(CAST(cbo_2002 AS VARCHAR), '-', '') = '{cbo_limpo}'
+                      AND ano = {ano}
+                """
+                res = duckdb.sql(query).fetchone()
                 
-                # Debug para verificar se funcionou
-                print(f"[INFO] Usando idade dinâmica para {cargo_nome}: {idade_final} anos ({faixa_experiencia})")
-                return idade_final
+                # Se tiver amostra relevante (> 50), usa a estatística específica
+                if res and res[0] >= 50:
+                    match faixa_experiencia:
+                        case "JUNIOR": return int(res[1])
+                        case "PLENO": return int(res[2])
+                        case "SENIOR": return int(res[3])
+                        case "ESPECIALISTA": return int(res[4])
+            except Exception as e:
+                print(f"[ERROR] Erro DuckDB resolver idade: {e}")
 
-        # Se não tiver dados específicos suficientes, usa o GLOBAL CALCULADO NO INÍCIO
+        # Fallback
         return self.mapa_fallback.get(faixa_experiencia, 32)
 
     def prever(self, dados):
         """Endpoint Individual (/predict)"""
-        # 1. Resolve a idade usando a lógica centralizada
         idade_calculada = self._resolver_idade(
             dados.cargo.value, dados.ano, dados.idade, dados.faixa_experiencia
         )
@@ -151,18 +143,17 @@ class SalarioService:
         cbo_codigo = self.nome_para_cbo.get(dados.cargo.value, "000000")
         cod_tamanho = mapa_tamanho.get(dados.tamanho_empresa.value, 6)
         cod_escolaridade = mapa_escolaridade.get(dados.escolaridade.value, 9)
-        cod_setor = mapa_setor.get(dados.setor.value, 18)  # Default para "Instituições Financeiras (Bancos)"
+        cod_setor = mapa_setor.get(dados.setor.value, 18)
         cod_sexo_rais = 1 if dados.sexo.value == "Masculino" else 2 
         cod_raca_rais = mapa_raca.get(dados.raca.value, 9)
 
-        # Busca médias (Target Encoding)
+        # Target Encoding (Vem do Pickle, rápido)
         val_cbo = self.mapa_medias['cbo'].get(str(cbo_codigo), self.media_global)
         val_esc = self.mapa_medias['esc'].get(str(cod_escolaridade), self.media_global)
         val_uf = self.mapa_medias['uf'].get(dados.uf.upper(), self.media_global)
         val_tam = self.mapa_medias['tam'].get(str(cod_tamanho), self.media_global)
         val_setor = self.mapa_medias['setor'].get(str(cod_setor), self.media_global)
 
-        # Encoders
         try:
             val_sexo_encoded = self.encoders['sexo'].transform([str(cod_sexo_rais)])[0]
             val_raca_encoded = self.encoders['raca_cor_valor'].transform([str(cod_raca_rais)])[0]
@@ -171,7 +162,7 @@ class SalarioService:
 
         df_input = pd.DataFrame({
             'cbo_valor': [val_cbo],
-            'idade': [idade_calculada], # <--- USA A IDADE CALCULADA
+            'idade': [idade_calculada],
             'esc_valor': [val_esc],
             'uf_valor': [val_uf],
             'tam_valor': [val_tam],
@@ -185,53 +176,71 @@ class SalarioService:
         return float(np.expm1(log_salario))
 
     def gerar_dados_mapa(self, dados_solicitacao):
-        """Endpoint Batch para o Mapa (/analise/mapa)"""
+        """Endpoint Batch (/analise/mapa) via DuckDB"""
         estados_br = [
             'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 
             'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
         ]
 
-        cbo_codigo = self.nome_para_cbo.get(dados_solicitacao.cargo.value)
+        print(f"[MAPA] Iniciando para Cargo: {dados_solicitacao.cargo.value}, Ano: {dados_solicitacao.ano}")
 
-        # 1. Resolve a idade usando a lógica centralizada (Dinâmica)
+        cbo_codigo = self.nome_para_cbo.get(dados_solicitacao.cargo.value)
+        if not cbo_codigo:
+            print(f"[ERROR] Cargo '{dados_solicitacao.cargo.value}' não encontrado no CBO MAP!")
+            cbo_codigo = "000000"
+
         idade_calculada = self._resolver_idade(
-            dados_solicitacao.cargo.value,
-            dados_solicitacao.ano,
-            dados_solicitacao.idade,
-            dados_solicitacao.faixa_experiencia
+            dados_solicitacao.cargo.value, dados_solicitacao.ano, 
+            dados_solicitacao.idade, dados_solicitacao.faixa_experiencia
         )
 
-        # 2. Estatísticas de Contagem (Demografia Real)
         stats_por_uf = {}
-        if cbo_codigo and not self.df_rais.empty:
+        # Só executa SQL se o arquivo existir e tivermos CBO válido
+        if cbo_codigo != "000000" and self.caminho_parquet and os.path.exists(self.caminho_parquet):
             cbo_limpo = str(cbo_codigo).replace('-', '').strip()
             
-            # --- CORREÇÃO AQUI: FILTRO DE ANO ---
-            # Antes estava filtrando apenas pelo cargo, agora filtra pelo ANO também
-            filtro = (self.df_rais['cbo_2002'].astype(str).str.replace('-', '') == cbo_limpo) & \
-                     (self.df_rais['ano'] == dados_solicitacao.ano) # <--- GARANTE QUE O ANO SEJA RESPEITADO
+            try:
+                # Query Agregada DuckDB com FILTRO DE ANO
+                query = f"""
+                    SELECT sigla_uf, sexo, COUNT(*) as qtd
+                    FROM '{self.caminho_parquet}'
+                    WHERE replace(CAST(cbo_2002 AS VARCHAR), '-', '') = '{cbo_limpo}'
+                      AND ano = {dados_solicitacao.ano}  -- <--- FILTRO DE ANO OBRIGATÓRIO
+                    GROUP BY sigla_uf, sexo
+                """
+                resultados = duckdb.sql(query).fetchall()
+                
+                # Processa o resultado do SQL
+                for linha in resultados:
+                    uf = linha[0]
+                    sexo = linha[1] # 1=Masc, 2=Fem
+                    qtd = linha[2]
+                    
+                    if uf not in stats_por_uf:
+                        stats_por_uf[uf] = {'total': 0, 'masculino': 0, 'feminino': 0}
+                    
+                    stats_por_uf[uf]['total'] += qtd
+                    if sexo == 1:
+                        stats_por_uf[uf]['masculino'] += qtd
+                    elif sexo == 2:
+                        stats_por_uf[uf]['feminino'] += qtd
+                
+                print(f"[MAPA] Dados encontrados para {len(stats_por_uf)} estados.")
 
-            df_filtrado_stats = self.df_rais[filtro]
+            except Exception as e:
+                print(f"[ERROR] Erro DuckDB mapa: {e}")
 
-            if not df_filtrado_stats.empty:
-                grupo = df_filtrado_stats.groupby(['sigla_uf', 'sexo']).size().unstack(fill_value=0)
-                for uf in estados_br:
-                    if uf in grupo.index:
-                        masc = int(grupo.loc[uf].get(1, 0))
-                        fem = int(grupo.loc[uf].get(2, 0))
-                        stats_por_uf[uf] = {'total': masc+fem, 'masculino': masc, 'feminino': fem}
-
-        # 3. Preparação para Predição em Lote
+        # Daqui para baixo é igual ao antigo (preparação do batch para o modelo)
         cod_tamanho = mapa_tamanho.get(dados_solicitacao.tamanho_empresa.value, 6)
         cod_escolaridade = mapa_escolaridade.get(dados_solicitacao.escolaridade.value, 9)
-        cod_setor = mapa_setor.get(dados_solicitacao.setor.value, 17) # <--- CORREÇÃO AQUI
-        cod_sexo_rais = 1 # Padrão Masculino para o mapa (ou parametrizar)
+        cod_setor = mapa_setor.get(dados_solicitacao.setor.value, 17)
+        cod_sexo_rais = 1 
         cod_raca_rais = 2
 
         val_cbo = self.mapa_medias['cbo'].get(str(cbo_codigo), self.media_global)
         val_esc = self.mapa_medias['esc'].get(str(cod_escolaridade), self.media_global)
         val_tam = self.mapa_medias['tam'].get(str(cod_tamanho), self.media_global)
-        val_setor = self.mapa_medias['setor'].get(str(cod_setor), self.media_global) # <--- E AQUI
+        val_setor = self.mapa_medias['setor'].get(str(cod_setor), self.media_global)
 
         try:
             val_sexo_encoded = self.encoders['sexo'].transform([str(cod_sexo_rais)])[0]
@@ -239,13 +248,12 @@ class SalarioService:
         except:
             val_sexo_encoded, val_raca_encoded = 0, 0
 
-        # 4. Cria Batch (27 linhas, uma para cada UF)
         input_batch = []
         for uf in estados_br:
             val_uf = self.mapa_medias['uf'].get(uf, self.media_global)
             input_batch.append({
                 'cbo_valor': val_cbo,
-                'idade': idade_calculada, # <--- USA A IDADE CALCULADA DINAMICAMENTE
+                'idade': idade_calculada,
                 'esc_valor': val_esc,
                 'uf_valor': val_uf,
                 'tam_valor': val_tam,
@@ -255,16 +263,14 @@ class SalarioService:
                 'ano': dados_solicitacao.ano
             })
 
-        # 5. Predição Otimizada
         df_batch = pd.DataFrame(input_batch)
         try:
             log_salarios = self.modelo.predict(df_batch)
             salarios_reais = np.expm1(log_salarios)
         except Exception as e:
-            print(f"Erro predict batch: {e}")
+            print(f"[ERROR] Falha no predict do modelo: {e}")
             salarios_reais = [0] * 27
 
-        # 6. Montagem da Resposta
         resultado = []
         for i, uf in enumerate(estados_br):
             stats = stats_por_uf.get(uf, {'total': 0, 'masculino': 0, 'feminino': 0})
@@ -278,5 +284,4 @@ class SalarioService:
             
         return resultado
 
-# Instância Singleton
 salario_service = SalarioService()

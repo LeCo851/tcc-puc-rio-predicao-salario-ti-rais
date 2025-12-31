@@ -16,12 +16,12 @@ public class DadosProfissionalDTO{
     private String uf;
     private String sexo;
     private String raca;
-    @JsonProperty("tamanho_empresa")
+    @JsonProperty("tamanhoEmpresa")
     private String tamanhoEmpresa;
     @JsonProperty("setor")
     private String setor;
-    @JsonProperty(value = "ano_referencia",required = true)
+    @JsonProperty(value = "anoReferencia")
     private Integer anoReferencia;
-    @JsonProperty("faixa_experiencia")
+    @JsonProperty("faixaExperiencia")
     private String faixaExperiencia;
 }

@@ -50,7 +50,7 @@
 
                   <div class="col-12">
                     <label class="form-label fw-bold small text-muted">Porte da Empresa</label>
-                    <select class="form-select" [(ngModel)]="dados.tamanho_empresa" name="tamanho">
+                    <select class="form-select" [(ngModel)]="dados.tamanhoEmpresa" name="tamanho">
                       <option value="Zero funcionários">Zero funcionários</option>
                       <option value="De 1 a 4 funcionários">De 1 a 4 funcionários</option>
                       <option value="De 5 a 9 funcionários">De 5 a 9 funcionários</option>
@@ -127,7 +127,7 @@
 
                   <div class="col-6">
                     <label class="form-label fw-bold small text-muted">Ano Ref.</label>
-                    <select class="form-select" [(ngModel)]="dados.ano_referencia" name="ano">
+                    <select class="form-select" [(ngModel)]="dados.anoReferencia" name="ano">
                       @for (ano of listaAnos; track ano) { <option [value]="ano">{{ ano }}</option> }
                     </select>
                   </div>
