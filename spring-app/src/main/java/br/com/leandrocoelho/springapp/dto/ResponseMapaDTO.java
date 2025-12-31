@@ -19,4 +19,5 @@ public class ResponseMapaDTO {
 
     private String salarioCorrigido;
     private BigDecimal fatorCorrecao;
+    private String salarioEstimadoFormatado;
 }

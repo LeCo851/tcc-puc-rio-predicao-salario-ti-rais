@@ -1,70 +1,163 @@
-<div class="container my-5 animate__animated animate__fadeIn">
-  <div class="row justify-content-center">
-    <div class="col-lg-10 col-xl-10">
+<div class="container-fluid py-4 bg-light">
 
-      <div class="card main-card shadow-lg">
-        <div class="card-body p-4 p-md-5">
+  <div class="row g-4">
 
-          <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 pb-3 border-bottom">
-            <div class="mb-3 mb-md-0">
-              <h3 class="fw-bold mb-1" style="color: var(--puc-blue)">
-                <i class="bi bi-geo-alt-fill me-2"></i> Inteligência Geográfica
-              </h3>
-              <p class="text-muted mb-0">Visão distribuída da remuneração no território nacional.</p>
-            </div>
+    <!-- COLUNA DA ESQUERDA: FILTROS -->
+    <div class="col-lg-3 d-flex flex-column gap-3">
 
-            <div class="col-md-4">
-              <label class="form-label small text-muted mb-1">Filtrar Cargo</label>
-              <select class="form-select form-select-sm">
-                <option selected>Analista de desenvolvimento de sistemas</option>
-                <option>Cientista de dados</option>
-                <option>Gerente de projetos</option>
-              </select>
-            </div>
+      <!-- GRUPO 1: DEFINIÇÃO DA AMOSTRA -->
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-white border-0 pt-3 pb-0">
+          <div class="d-flex align-items-center text-primary mb-1">
+            <i class="bi bi-people-fill me-2 fs-5"></i>
+            <h6 class="fw-bold mb-0">Base da Amostra</h6>
+          </div>
+          <p class="text-muted small mb-0 lh-sm" style="font-size: 0.8rem;">
+            Filtra a quantidade de profissionais (N) encontrados na base RAIS.
+          </p>
+        </div>
+
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label fw-bold text-secondary small">Cargo / Ocupação</label>
+            <input class="form-control" list="listaCargosMap" [(ngModel)]="cargoSelecionado" placeholder="Digite o cargo...">
+            <datalist id="listaCargosMap">
+              @for (c of listaCargos; track c) { <option [value]="c"></option> }
+            </datalist>
           </div>
 
-          <div class="chart-container text-center bg-light rounded-3 border p-1" style="min-height: 600px; position: relative;">
+          <div class="mb-0">
+            <label class="form-label fw-bold text-secondary small">Ano de Referência</label>
+            <select class="form-select" [(ngModel)]="anoSelecionado">
+              @for (ano of anosDisponiveis; track ano) { <option [value]="ano">{{ ano }}</option> }
+            </select>
+          </div>
+        </div>
+      </div>
 
-            @if (erro) {
+      <!-- GRUPO 2: PARÂMETROS DA ESTIMATIVA -->
+      <div class="card shadow-sm border-0 flex-grow-1">
+        <div class="card-header bg-white border-0 pt-3 pb-0">
+          <div class="d-flex align-items-center text-success mb-1">
+            <i class="bi bi-cpu-fill me-2 fs-5"></i>
+            <h6 class="fw-bold mb-0">Estimativa Salarial (IA)</h6>
+          </div>
+          <p class="text-muted small mb-0 lh-sm" style="font-size: 0.8rem;">
+            Define o perfil para o modelo de Machine Learning calcular o salário.
+          </p>
+          <p class="text-muted small mb-0 lh-sm" style="font-size: 0.8rem;">
+            Obs.: Para o cálculo do salário médio, assumimos por padrão pessoa do sexo masculino da raça/cor branca
+          </p>
+        </div>
 
-              <div class="d-flex flex-column align-items-center justify-content-center h-100 py-5">
-                <i class="bi bi-exclamation-triangle-fill text-danger fs-1 mb-3"></i>
-                <h6 class="text-danger fw-bold">{{ erro }}</h6>
-              </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label fw-bold small text-muted">Setor de Atuação</label>
+            <select class="form-select" [(ngModel)]="setorSelecionado" name="setor">
+              <option [ngValue]="null" disabled selected>Selecione o setor...</option>
 
-            } @else if (!chartOptions) {
-
-              <div class="d-flex flex-column align-items-center justify-content-center h-100 py-5">
-                <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;"></div>
-                <h6 class="text-muted fw-bold">Carregando Topologia do Brasil...</h6>
-                <small class="text-muted">Conectando ao IBGE/Highcharts</small>
-              </div>
-
-            } @else {
-
-              <highcharts-chart
-                [Highcharts]="Highcharts"
-                [constructorType]="'mapChart'"
-                [options]="chartOptions"
-                style="width: 100%; height: 600px; display: block; border-radius: 8px;">
-              </highcharts-chart>
-
-            }
-
+              @for (item of setoresOpcoes; track item.value) {
+                <option [value]="item.value">{{ item.label }}</option>
+              }
+            </select>
           </div>
 
-          <div class="alert alert-light border mt-4 d-flex align-items-center shadow-sm">
-            <i class="bi bi-info-circle-fill text-primary me-3 fs-4"></i>
-            <div>
-              <small class="text-muted d-block">
-                <strong>Interpretação:</strong> As cores mais escuras (<span style="color: var(--puc-blue)"> Azul PUC</span>) indicam os estados com as maiores médias salariais para o cargo selecionado.
-              </small>
+          <div class="mb-3">
+            <label class="form-label fw-bold text-secondary small">Porte da Empresa</label>
+            <select class="form-select" [(ngModel)]="tamanhoEmpresaSelecionado">
+              <option value="Zero funcionários">Zero funcionários</option>
+              <option value="De 1 a 4 funcionários">De 1 a 4 funcionários</option>
+              <option value="De 5 a 9 funcionários">De 5 a 9 funcionários</option>
+              <option value="De 10 a 19 funcionários">De 10 a 19 funcionários</option>
+              <option value="De 20 a 49 funcionários">De 20 a 49 funcionários</option>
+              <option value="De 50 a 99 funcionários">De 50 a 99 funcionários</option>
+              <option value="De 100 a 249 funcionários">De 100 a 249 funcionários"</option>
+              <option value="De 250 a 499 funcionários">De 250 a 499 funcionários</option>
+              <option value="De 500 a 999 funcionários">De 500 a 999 funcionários</option>
+              <option value="1000 ou mais funcionários">1000 ou mais funcionários+</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-bold text-secondary small">Escolaridade</label>
+            <select class="form-select" [(ngModel)]="escolaridadeSelecionada">
+              <option value="Médio Completo">Médio Completo</option>
+              <option value="Superior Incompleto">Superior Incompleto</option>
+              <option value="Superior Completo">Superior Completo</option>
+              <option value="Mestrado">Mestrado</option>
+              <option value="Doutorado">Doutorado</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-bold text-secondary small">Senioridade</label>
+            <select class="form-select" [(ngModel)]="faixaSelecionada">
+              <option value="">🛠️ Personalizar</option>
+              @for (op of opcoesExperiencia; track op.value) {
+                <option [value]="op.value">{{ op.label }}</option>
+              }
+            </select>
+          </div>
+
+          @if (!faixaSelecionada) {
+            <div class="mb-4 animate__animated animate__fadeIn">
+              <label class="form-label fw-bold text-secondary small">Idade Manual: {{ idadeManual }} anos</label>
+              <input type="range" class="form-range" min="18" max="65" [(ngModel)]="idadeManual">
             </div>
+          }
+
+          <div class="d-grid mt-4">
+            <button class="btn btn-primary py-2 fw-bold shadow-sm" (click)="atualizarDadosMapa()" [disabled]="carregando">
+              @if (carregando) {
+                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Processando...
+              } @else {
+                <i class="bi bi-search me-2"></i> Atualizar Mapa
+              }
+            </button>
           </div>
 
         </div>
       </div>
-
     </div>
+
+    <!-- COLUNA DA DIREITA: MAPA -->
+    <div class="col-lg-9">
+      <div class="card shadow border-0 h-100" style="min-height: 750px;">
+        <div class="card-body p-0 position-relative rounded overflow-hidden">
+
+          <h5 class="position-absolute top-0 start-0 m-3 text-secondary fw-bold" style="z-index: 5;">
+            <i class="bi bi-geo-alt-fill text-danger"></i> Mapa Salarial Nacional
+          </h5>
+
+          @if (carregando) {
+            <div class="position-absolute top-0 start-0 w-100 h-100 bg-white bg-opacity-90 d-flex flex-column justify-content-center align-items-center" style="z-index: 10;">
+              <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;"></div>
+              <h5 class="text-muted fw-bold">Consultando Inteligência Artificial...</h5>
+              <small class="text-secondary">Processando dados dos 27 estados</small>
+            </div>
+          }
+
+          @if (erro) {
+            <div class="d-flex h-100 align-items-center justify-content-center">
+              <div class="alert alert-danger m-5 shadow-sm text-center">
+                <i class="bi bi-exclamation-triangle-fill fs-3 d-block mb-2"></i>
+                {{ erro }}
+              </div>
+            </div>
+          }
+
+          @if (chartOptions && !erro) {
+            <highcharts-chart
+              [Highcharts]="Highcharts"
+              [options]="chartOptions"
+              [constructorType]="'mapChart'"
+              style="width: 100%; height: 100%; display: block; min-height: 750px;">
+            </highcharts-chart>
+          }
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>

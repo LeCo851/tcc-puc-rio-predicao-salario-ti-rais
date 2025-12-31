@@ -1,34 +1,31 @@
-<div class="container my-5 animate__animated animate__fadeIn">
+<div class="container-fluid py-5 animate__animated animate__fadeIn">
   <div class="row justify-content-center">
-    <div class="col-lg-10 col-xl-9">
+    <div class="col-xl-11 col-xxl-10"> <!-- Aumentado para ocupar mais espaço horizontal -->
 
-      <div class="card main-card shadow-lg">
-        <div class="card-body p-4 p-md-5">
+      <div class="row g-4">
 
-          <div class="text-center mb-4">
-            <h2 class="fw-bold" style="color: var(--puc-blue)">Estimativa Salarial com Machine Learning</h2>
-            <p class="text-muted">Preencha os dados abaixo para consultar o modelo preditivo baseado na RAIS.</p>
-            <p class="text-muted">Somente cargos relacionados ao mercado de TI.</p>
-          </div>
+        <!-- COLUNA ESQUERDA: FORMULÁRIO -->
+        <div class="col-lg-5 col-xl-4">
+          <div class="card main-card shadow-lg border-0 h-100">
+            <div class="card-body p-4">
 
-          <form (ngSubmit)="calcular()" #formSalario="ngForm">
+              <div class="text-center mb-4">
+                <h3 class="fw-bold" style="color: var(--puc-blue)">Estimativa Salarial</h3>
+                <p class="text-muted small">Preencha os dados para consultar a IA.</p>
+              </div>
 
-            <div class="row g-4">
-
-              <div class="col-md-12 col-lg-6">
-                <h5 class="section-title"> <i class="bi bi-briefcase me-2"></i> Perfil Profissional</h5>
+              <form (ngSubmit)="calcular()" #formSalario="ngForm">
 
                 <div class="mb-3">
-                  <label for="cargoInput" class="form-label fw-bold">Cargo / Ocupação/ CBO</label>
-
+                  <label for="cargoInput" class="form-label fw-bold small text-muted">Cargo / Ocupação</label>
                   <input
                     type="text"
-                    class="form-control form-control-lg"
+                    class="form-control bg-light"
                     id="cargoInput"
                     name="cargo"
                     [(ngModel)]="dados.cargo"
                     list="datalist-cargos"
-                    placeholder="Ex: Analista de desenvolvimento de software"
+                    placeholder="Busque o cargo..."
                     autocomplete="on"
                     required>
 
@@ -37,64 +34,61 @@
                       <option [value]="opcao"></option>
                     }
                   </datalist>
+                </div>
 
-                  <div class="form-text text-muted">
-                    <small>
-                      <i class="bi bi-info-circle"></i>
-                      Aceita nomes de cargo (desenvolvedor de games), nomes oficiais ("Analista de desenvolvimento de sistemas") ou códigos CBO ("2124").
-                    </small>
+                <div class="row g-3">
+                  <div class="col-12">
+                    <label class="form-label fw-bold small text-muted">Setor de Atuação</label>
+                    <select class="form-select" [(ngModel)]="dados.setor" name="setor">
+                      <option [ngValue]="null" disabled selected>Selecione o setor...</option>
+
+                      @for (item of setoresOpcoes; track item.value) {
+                        <option [value]="item.value">{{ item.label }}</option>
+                      }
+                    </select>
                   </div>
-                </div>
 
-                <div class="mb-3">
-                  <label class="form-label">Setor de Atuação</label>
-                  <select class="form-select" [(ngModel)]="dados.setor" name="setor">
-                    <option value="Instituições Financeiras (Bancos)">Instituições Financeiras (Bancos)</option>
-                    <option value="Comércio Varejista">Comércio Varejista</option>
-                    <option value="Comércio Atacadista">Comércio Atacadista</option>
-                    <option value="Indústria Têxtil">Indústria Têxtil</option>
-                    <option value="Indústria Química">Indústria Química</option>
-                    <option value="Construção Civil">Construção Civil</option>
-                    <option value="Serviços de Utilidade Pública">Serviços de Utilidade Pública</option>
-                    <option value="Transportes e Comunicações">Transportes e Comunicações</option>
-                    <option value="Administração Pública">Administração Pública</option>
-                    <option value="Ensino">Ensino</option>
-                    <option value="Médicos, Odontológicos e Veterinários">Médicos, Odontológicos e Veterinários</option>
-                    <option value="Alojamento e Alimentação">Alojamento e Alimentação</option>
-                  </select>
-                </div>
+                  <div class="col-12">
+                    <label class="form-label fw-bold small text-muted">Porte da Empresa</label>
+                    <select class="form-select" [(ngModel)]="dados.tamanho_empresa" name="tamanho">
+                      <option value="Zero funcionários">Zero funcionários</option>
+                      <option value="De 1 a 4 funcionários">De 1 a 4 funcionários</option>
+                      <option value="De 5 a 9 funcionários">De 5 a 9 funcionários</option>
+                      <option value="De 10 a 19 funcionários">De 10 a 19 funcionários</option>
+                      <option value="De 20 a 49 funcionários">De 20 a 49 funcionários</option>
+                      <option value="De 50 a 99 funcionários">De 50 a 99 funcionários</option>
+                      <option value="De 100 a 249 funcionários">De 100 a 249 funcionários</option>
+                      <option value="De 250 a 499 funcionários">De 250 a 499 funcionários</option>
+                      <option value="De 500 a 999 funcionários">De 500 a 999 funcionários</option>
+                      <option value="1000 ou mais funcionários">1000 ou mais funcionários</option>
+                    </select>
+                  </div>
 
-                <div class="mb-3">
-                  <label class="form-label">Porte da Empresa</label>
-                  <select class="form-select" [(ngModel)]="dados.tamanho_empresa" name="tamanho">
-                    <option value="Zero funcionários">Zero funcionários</option>
-                    <option value="De 1 a 4 funcionários">De 1 a 4 funcionários</option>
-                    <option value="De 5 a 9 funcionários">De 5 a 9 funcionários</option>
-                    <option value="De 10 a 19 funcionários">De 10 a 19 funcionários</option>
-                    <option value="De 20 a 49 funcionários">De 20 a 49 funcionários</option>
-                    <option value="De 50 a 99 funcionários">De 50 a 99 funcionários</option>
-                    <option value="De 100 a 249 funcionários">De 100 a 249 funcionários</option>
-                    <option value="De 250 a 499 funcionários">De 250 a 499 funcionários</option>
-                    <option value="De 500 a 999 funcionários">De 500 a 999 funcionários</option>
-                    <option value="1000 ou mais funcionários">1000 ou mais funcionários</option>
-                  </select>
-                </div>
-              </div>
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold small text-muted">Senioridade</label>
+                    <select class="form-select bg-light border-primary border-opacity-25"
+                            [(ngModel)]="senioridadeSelecionada" name="senioridade">
+                      <option value="">🛠️ Manual</option>
+                      @for (exp of listaExperiencias; track exp.value) {
+                        <option [value]="exp.value">{{ exp.label }}</option>
+                      }
+                    </select>
+                  </div>
 
-              <div class="col-md-12 col-lg-6">
-                <h5 class="section-title"> <i class="bi bi-person me-2"></i> Dados Demográficos</h5>
-
-                <div class="row">
-                  <div class="col-6 mb-3">
-                    <label class="form-label">Idade</label>
-                    <input type="number" class="form-control" [(ngModel)]="dados.idade" name="idade" min="16" max="70" required #idadeInput="ngModel">
-                    @if (idadeInput.invalid && (idadeInput.dirty || idadeInput.touched)) {
-                      <div class="text-danger small mt-1">Inválido (16-70)</div>
+                  <div class="col-md-6">
+                    @if (!senioridadeSelecionada) {
+                      <div class="animate__animated animate__fadeIn">
+                        <label class="form-label fw-bold small text-muted">Idade</label>
+                        <input type="number" class="form-control" [(ngModel)]="dados.idade" name="idade" min="16" max="70" required #idadeInput="ngModel">
+                      </div>
+                    } @else {
+                      <label class="form-label fw-bold small text-muted opacity-50">Idade</label>
+                      <input type="text" class="form-control" disabled value="Automático">
                     }
                   </div>
 
-                  <div class="col-6 mb-3">
-                    <label class="form-label">Escolaridade</label>
+                  <div class="col-12">
+                    <label class="form-label fw-bold small text-muted">Escolaridade</label>
                     <select class="form-select" [(ngModel)]="dados.escolaridade" name="escolaridade">
                       <option value="Médio Completo">Médio Completo</option>
                       <option value="Superior Incompleto">Superior Incompleto</option>
@@ -103,18 +97,17 @@
                       <option value="Doutorado">Doutorado</option>
                     </select>
                   </div>
-                </div>
 
-                <div class="row">
-                  <div class="col-6 mb-3">
-                    <label class="form-label">Sexo</label>
+                  <div class="col-6">
+                    <label class="form-label fw-bold small text-muted">Sexo</label>
                     <select class="form-select" [(ngModel)]="dados.sexo" name="sexo">
                       <option value="Masculino">Masculino</option>
                       <option value="Feminino">Feminino</option>
                     </select>
                   </div>
-                  <div class="col-6 mb-3">
-                    <label class="form-label">Raça/Cor</label>
+
+                  <div class="col-6">
+                    <label class="form-label fw-bold small text-muted">Raça/Cor</label>
                     <select class="form-select" [(ngModel)]="dados.raca" name="raca">
                       <option value="Branca">Branca</option>
                       <option value="Preta">Preta</option>
@@ -124,92 +117,154 @@
                       <option value="Não Informado">Não Informado</option>
                     </select>
                   </div>
-                </div>
 
-                <div class="row">
-                  <div class="col-6 mb-3">
-                    <label class="form-label">Estado (UF)</label>
+                  <div class="col-6">
+                    <label class="form-label fw-bold small text-muted">UF</label>
                     <select class="form-select" [(ngModel)]="dados.uf" name="uf">
                       @for (uf of listaUfs; track uf) { <option [value]="uf">{{ uf }}</option> }
                     </select>
                   </div>
-                  <div class="col-6 mb-3">
-                    <label class="form-label">Ano Ref.</label>
+
+                  <div class="col-6">
+                    <label class="form-label fw-bold small text-muted">Ano Ref.</label>
                     <select class="form-select" [(ngModel)]="dados.ano_referencia" name="ano">
                       @for (ano of listaAnos; track ano) { <option [value]="ano">{{ ano }}</option> }
                     </select>
                   </div>
                 </div>
 
-              </div>
-            </div>
-
-            <div class="mt-4 pt-3 border-top">
-              <button type="submit" class="btn btn-puc w-100 py-3 text-uppercase letter-spacing-1" [disabled]="carregando || formSalario.invalid">
-                @if (carregando) {
-                  <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                  Processando Modelo ...
-                } @else {
-                  <i class="bi bi-calculator me-2"></i> Calcular Estimativa Salarial
-                }
-              </button>
-            </div>
-
-          </form>
-
-          @if (resultado) {
-            <div class="result-box p-4 mt-5 shadow-sm text-center animate__animated animate__fadeIn">
-
-              <h6 class="text-uppercase text-muted fw-bold mb-4">Análise de Mercado & Correção</h6>
-
-              <div class="row align-items-center">
-                <div class="col-md-6 border-end">
-                  <small class="text-muted d-block mb-1 text-uppercase ls-1">Base Histórica (RAIS)</small>
-                  <h2 class="fw-bold text-secondary mb-0">{{ resultado.resultado.salario_estimado }}</h2>
-                  <small class="text-muted" style="font-size: 0.75rem">Ano Ref: {{ dados.ano_referencia }}</small>
+                <div class="mt-4 pt-2">
+                  <button type="submit" class="btn btn-primary w-100 py-2 fw-bold shadow-sm"
+                          [disabled]="carregando || formSalario.invalid"
+                          style="background-color: var(--puc-blue); border: none;">
+                    @if (carregando) {
+                      <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                      Processando...
+                    } @else {
+                      <i class="bi bi-cpu me-2"></i> Calcular
+                    }
+                  </button>
                 </div>
 
-                <div class="col-md-6 mt-3 mt-md-0">
-                  <div class="d-inline-block px-3 py-1 rounded-pill bg-light mb-2 shadow-sm">
-                    <small class="text-primary fw-bold">
-                      <i class="bi bi-graph-up-arrow me-1"></i> Ajustado p/ Hoje
-                    </small>
-                  </div>
-                  <h2 class="display-6 fw-bold mb-0" style="color: var(--puc-blue)">
-                    {{ resultado.resultado.salario_corrigido }}
-                  </h2>
-                  <div class="mt-2">
-                    <small class="text-muted" style="font-size: 0.75rem">
-                      <span class="badge bg-secondary opacity-75 me-1">
-                        Fator: {{ resultado.resultado.fator_correcao }}x
-                      </span>
-                      IPCA Acumulado ({{ dados.ano_referencia }}-2025)
-                    </small>
-                  </div>
-                </div>
-              </div>
-
-              <hr class="my-4 opacity-25">
-
-              <div class="badge bg-secondary mb-3 px-3 py-2 text-uppercase letter-spacing-1">
-                {{ resultado.resultado.cargo_selecionado }}
-              </div>
-
-              <p class="text-muted small mb-0 px-md-5">
-                Perfil: <strong>{{ resultado.resultado.detalhes_perfil.porte_empresa }}</strong> —
-                <strong>{{ resultado.resultado.detalhes_perfil.setor_atuacao }}</strong>
-              </p>
+              </form>
             </div>
-          }
-
-          @if (erro) {
-            <div class="alert alert-danger mt-4 d-flex align-items-center" role="alert">
-              <i class="bi bi-exclamation-triangle-fill me-3 fs-4"></i>
-              <div>{{ erro }}</div>
-            </div>
-          }
-
+          </div>
         </div>
+
+        <!-- COLUNA DIREITA: RESULTADO (OU PLACEHOLDER) -->
+        <div class="col-lg-7 col-xl-8">
+          <div class="card border-0 shadow-lg h-100 bg-light position-relative overflow-hidden">
+
+            <!-- FUNDO DECORATIVO QUANDO NÃO HÁ RESULTADO -->
+            @if (!resultado && !carregando && !erro) {
+              <div class="d-flex flex-column align-items-center justify-content-center h-100 text-center p-5 opacity-50">
+                <i class="bi bi-bar-chart-line text-secondary" style="font-size: 8rem;"></i>
+                <h3 class="mt-4 text-muted fw-bold">Aguardando Dados</h3>
+                <p class="text-secondary" style="max-width: 400px;">
+                  Preencha o formulário ao lado e clique em "Calcular" para ver a estimativa salarial detalhada aqui.
+                </p>
+              </div>
+            }
+
+            <!-- LOADING STATE -->
+            @if (carregando) {
+              <div class="d-flex flex-column align-items-center justify-content-center h-100 text-center p-5">
+                <div class="spinner-grow text-primary mb-4" style="width: 4rem; height: 4rem;" role="status"></div>
+                <h4 class="text-primary fw-bold animate__animated animate__pulse animate__infinite">Analisando Mercado...</h4>
+                <p class="text-muted">Consultando milhões de registros da RAIS</p>
+              </div>
+            }
+
+            <!-- RESULTADO -->
+            @if (resultado) {
+              <div class="animate__animated animate__fadeIn h-100 d-flex flex-column">
+                <div class="card-header bg-gradient text-white p-4" style="background: var(--puc-blue);">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0 fw-bold"><i class="bi bi-robot me-2"></i> Análise Concluída</h4>
+                  </div>
+                </div>
+
+                <div class="card-body p-5 text-center d-flex flex-column justify-content-center align-items-center flex-grow-1">
+
+                  <h4 class="text-uppercase text-secondary fw-bold ls-1 mb-4">
+                    {{ resultado.cargo }}
+                  </h4>
+
+                  <div class="d-flex justify-content-center gap-2 mb-5 flex-wrap">
+                    <span class="badge bg-white text-dark border shadow-sm p-2">
+                      <i class="bi bi-building me-1"></i> {{ resultado.resultado.detalhesPerfil.porteEmpresa }}
+                    </span>
+                    <span class="badge bg-white text-dark border shadow-sm p-2">
+                      <i class="bi bi-mortarboard me-1"></i> {{ resultado.resultado.detalhesPerfil.escolaridade }}
+                    </span>
+                    @if (resultado.resultado.detalhesPerfil.nivelExperiencia) {
+                      <span class="badge bg-info text-dark border shadow-sm p-2">
+                        <i class="bi bi-star-fill me-1"></i> {{ resultado.resultado.detalhesPerfil.nivelExperiencia }}
+                      </span>
+                    }
+                    <!-- ADICIONADO BADGE DE RAÇA -->
+                    @if (resultado.resultado.detalhesPerfil.raca) {
+                      <span class="badge bg-secondary text-white border shadow-sm p-2">
+                        <i class="bi bi-person-badge me-1"></i> {{ resultado.resultado.detalhesPerfil.raca }}
+                      </span>
+                    }
+                  </div>
+
+                  <div class="py-2 mb-4 w-100">
+                    <h1 class="display-1 fw-bold text-success mb-2">
+                      {{ resultado.resultado.salario_corrigido }}
+                    </h1>
+                    <p class="text-muted small text-uppercase fw-bold">Média de Mercado Ajustada (2025)</p>
+
+                    <div class="d-inline-flex align-items-center bg-white border rounded-pill px-4 py-2 shadow-sm mt-2">
+                      <small class="text-muted me-2">
+                        Base Histórica: <strong>R$ {{ resultado.resultado.salario_estimado | number:'1.2-2' }}</strong>
+                      </small>
+                      <i class="bi bi-arrow-right-short text-primary mx-1"></i>
+                      <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">
+                        IPCA {{ resultado.resultado.fator_correcao }}x
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="row justify-content-center w-100">
+                    <div class="col-md-10">
+                      <div class="alert alert-secondary bg-white border shadow-sm rounded-4 p-4">
+                        <h6 class="text-muted fw-bold text-uppercase small mb-3">
+                          <i class="bi bi-arrows-expand me-1"></i> Faixa de Negociação Provável
+                        </h6>
+                        <div class="d-flex justify-content-between align-items-center px-md-5">
+                          <div class="text-center">
+                            <span class="d-block text-secondary small fw-bold mb-1">Mínimo</span>
+                            <span class="h3 fw-bold text-dark mb-0">{{ resultado.resultado.salarioMinFormatado }}</span>
+                          </div>
+                          <div class="text-muted opacity-25"><i class="bi bi-arrow-left-right fs-2"></i></div>
+                          <div class="text-center">
+                            <span class="d-block text-secondary small fw-bold mb-1">Máximo</span>
+                            <span class="h3 fw-bold text-dark mb-0">{{ resultado.resultado.salarioMaxFormatado }}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            }
+
+            <!-- ERRO -->
+            @if (erro) {
+              <div class="d-flex flex-column align-items-center justify-content-center h-100 text-center p-5">
+                <div class="alert alert-danger shadow-sm animate__animated animate__shakeX" role="alert">
+                  <i class="bi bi-exclamation-triangle-fill me-2 fs-4"></i>
+                  <strong>Ops!</strong> {{ erro }}
+                </div>
+              </div>
+            }
+
+          </div>
+        </div>
+
       </div>
     </div>
   </div>

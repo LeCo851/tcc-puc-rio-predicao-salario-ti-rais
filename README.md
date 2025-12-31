@@ -1,34 +1,36 @@
 # TCC PUC-Rio - Predição de Salários de TI (RAIS)
 
-Este projeto é parte do Trabalho de Conclusão de Curso (TCC) do MBA em Data Science da PUC-Rio. O objetivo é fornecer uma estimativa salarial para profissionais de Tecnologia da Informação (TI) com base em dados históricos da RAIS (Relação Anual de Informações Sociais), utilizando técnicas de Machine Learning.
+Este projeto é parte do Trabalho de Conclusão de Curso (TCC) do MBA em Data Science & Big Data da PUC-Rio. O objetivo é fornecer uma estimativa salarial para profissionais de Tecnologia da Informação (TI) com base em dados históricos da RAIS (Relação Anual de Informações Sociais), utilizando técnicas de Machine Learning.
 
 ## 🏗️ Arquitetura do Projeto
 
 O projeto segue uma arquitetura de microsserviços composta por três camadas principais:
 
 1.  **angular-app (Frontend):**
-    *   Interface web desenvolvida em Angular.
-    *   Permite ao usuário inserir seus dados (cargo, escolaridade, etc.) de forma amigável.
-    *   **Dashboard:** Visualização interativa de dados geográficos (Mapa do Brasil) utilizando Highcharts.
+    *   Interface web desenvolvida em Angular 17+.
+    *   **Predição:** Formulário inteligente para estimativa salarial personalizada.
+    *   **Dashboard:** Mapa interativo do Brasil (Highmaps) para visualização de médias salariais por estado.
+    *   **Sobre:** Documentação técnica integrada sobre a metodologia e desafios do projeto.
     *   Consome a API do backend (`spring-app`).
 
 2.  **spring-app (Backend):**
-    *   API REST desenvolvida em Java com Spring Boot.
-    *   Atua como middleware e gateway.
+    *   API REST desenvolvida em Java com Spring Boot 3.
+    *   Atua como middleware e gateway de segurança.
+    *   **Correção Monetária:** Aplica o índice IPCA para atualizar valores históricos.
     *   Recebe as requisições do frontend, valida os dados e repassa para o serviço de ML.
 
 3.  **ml-api (Machine Learning Service):**
     *   Serviço Python/FastAPI.
-    *   Carrega o modelo LightGBM treinado.
-    *   Realiza o pré-processamento e a inferência salarial.
+    *   Carrega o modelo **LightGBM** treinado.
+    *   Realiza o pré-processamento (Target Encoding, tratamento de nulos) e a inferência salarial.
 
 ## 🚀 Tecnologias Utilizadas
 
 *   **Frontend Web:**
     *   Angular 17+
     *   TypeScript
-    *   Highcharts & Highmaps
-    *   HTML5 / CSS3
+    *   Highcharts & Highmaps (Visualização de Dados)
+    *   Bootstrap 5 (UI/UX)
     *   Node.js & NPM
 
 *   **Backend Java:**
@@ -52,7 +54,7 @@ O projeto segue uma arquitetura de microsserviços composta por três camadas pr
 ```
 tcc-puc-rio-predicao-salario-ti-rais/
 ├── angular-app/            # Frontend Angular
-│   ├── src/
+│   ├── src/app/pages/      # Componentes (Home, Dashboard, Sobre)
 │   ├── package.json
 │   └── ...
 ├── spring-app/             # Backend Spring Boot
@@ -103,12 +105,12 @@ ng serve
 
 ## 🔌 Endpoints e Fluxo
 
-1.  **Usuário** acessa `http://localhost:4200` e preenche o formulário.
-2.  **Angular** envia POST para `http://localhost:8080/api/salarios/prever`.
-3.  **Spring Boot** repassa a requisição para `http://localhost:8000/predict`.
+1.  **Usuário** acessa `http://localhost:4200` e interage com a interface.
+2.  **Angular** envia requisições para o **Spring Boot** (`/api/salarios/prever` ou `/api/salarios/mapa`).
+3.  **Spring Boot** processa regras de negócio (ex: IPCA) e repassa para o **Python** (`/predict`).
 4.  **ML API** retorna o salário estimado, que faz o caminho inverso até o usuário.
 
 ## 📝 Autor
 
 **Leandro Coelho**
-MBA em Data Science - PUC-Rio
+MBA em Data Science & Big Data - PUC-Rio

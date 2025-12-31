@@ -3,14 +3,11 @@ package br.com.leandrocoelho.springapp.controller;
 import br.com.leandrocoelho.springapp.dto.DadosProfissionalDTO;
 import br.com.leandrocoelho.springapp.dto.ResponseMapaDTO;
 import br.com.leandrocoelho.springapp.dto.ResponsePrevisaoSalarioDTO;
-import br.com.leandrocoelho.springapp.exceptions.DadosInvalidosException;
 import br.com.leandrocoelho.springapp.service.MapaService;
 import br.com.leandrocoelho.springapp.service.SalarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.xml.datatype.DatatypeConfigurationException;
 import java.util.List;
 
 @RestController
@@ -25,24 +22,19 @@ public class SalarioController {
 
     @PostMapping("/prever")
     public ResponseEntity<ResponsePrevisaoSalarioDTO> prever(@RequestBody DadosProfissionalDTO dadosProfissionalDTO){
-        try {
+
             ResponsePrevisaoSalarioDTO resultado = salarioService.obterEstimativa(dadosProfissionalDTO);
             return ResponseEntity.ok(resultado);
-        } catch (Exception e) {
-            throw new DadosInvalidosException(e.getMessage());
-        }
+
     }
 
 
     @PostMapping("/mapa")
     public ResponseEntity<List<ResponseMapaDTO>> buscarDadosMapa(@RequestBody DadosProfissionalDTO dadosProfissionalDTO){
 
-        try {
             List<ResponseMapaDTO> resultado = mapaService.obterDadosMapa(dadosProfissionalDTO);
             return ResponseEntity.ok(resultado);
-        } catch (Exception e) {
-            throw new DadosInvalidosException(e.getMessage());
-        }
+
     }
 
 }

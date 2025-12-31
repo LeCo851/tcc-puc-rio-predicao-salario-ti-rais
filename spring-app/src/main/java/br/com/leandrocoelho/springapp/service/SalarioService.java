@@ -2,9 +2,12 @@ package br.com.leandrocoelho.springapp.service;
 
 import br.com.leandrocoelho.springapp.dto.DadosProfissionalDTO;
 import br.com.leandrocoelho.springapp.dto.ResponsePrevisaoSalarioDTO;
+import br.com.leandrocoelho.springapp.exceptions.DadosInvalidosException;
+import br.com.leandrocoelho.springapp.exceptions.StandardError;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -23,7 +26,6 @@ public class SalarioService {
         long inicio = System.currentTimeMillis();
         log.info(">>> [JAVA] Iniciando chamada ao Python para o cargo: {}",dados.getCargo());
 
-        try {
             ResponsePrevisaoSalarioDTO resposta = restTemplate.postForObject(
                     mlApiUrl,
                     dados,
@@ -32,19 +34,25 @@ public class SalarioService {
             if(resposta != null){
                 correcaoMonetariaService.aplicarCorrecao(resposta,dados.getAnoReferencia());
                 // Log opcional para ver se funcionou
+
+                var detalhes = ResponsePrevisaoSalarioDTO.DetalhesPerfilDTO.builder()
+                                .porteEmpresa(dados.getTamanhoEmpresa())
+                                        .escolaridade(dados.getEscolaridade())
+                                                .nivelExperiencia(dados.getFaixaExperiencia())
+                                                        .build();
+
+                resposta.getResultado().setDetalhesPerfil(detalhes);
                 log.info(">>> Correção aplicada. Valor Original: {} | Ajustado: {}",
                         resposta.getResultado().getSalarioEstimado(),
                         resposta.getResultado().getSalarioCorrigido());
             }
 
+
             long tempoTotal = System.currentTimeMillis() - inicio;
             log.info(">>> Sucesso! Resposta recebidae e processada em {} ms",tempoTotal);
 
             return resposta;
-        } catch (Exception e) {
-            long tempoTotal = System.currentTimeMillis() - inicio;
-            log.error(">>> Erro na comunicação com IA após {} ms. Causa: {}", tempoTotal, e.getMessage());
-            throw e;
-        }
+
+
     }
 }

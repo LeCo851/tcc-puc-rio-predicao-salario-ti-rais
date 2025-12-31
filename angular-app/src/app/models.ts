@@ -1,6 +1,7 @@
 export interface DadosProfissional {
   cargo: string;
-  idade: number;
+  idade: number | null;
+  faixa_experiencia?: string;
   escolaridade: string;
   uf: string;
   sexo: string;
@@ -9,17 +10,35 @@ export interface DadosProfissional {
   setor: string;
   ano_referencia: number;
 }
+export interface DetalhesPerfil {
+
+  porteEmpresa: string;
+  escolaridade: string;
+  nivelExperiencia: string;
+  raca: string; // Adicionado
+}
+
+export interface ResultadoDTO {
+  // --- DADOS NUMÉRICOS (Vindos do Python) ---
+  salario_estimado: number;
+  faixa_confianca_min: number;
+  faixa_confianca_max: number;
+
+  // --- DADOS FORMATADOS (Vindos do Java) ---
+  salario_corrigido: string;       // "R$ 7.500,00"
+  salarioMinFormatado: string;    // "R$ 5.000,00"
+  salarioMaxFormatado: string;    // "R$ 10.000,00"
+
+  fator_correcao: number;
+  cargo: string;
+
+  // Objeto aninhado com os detalhes
+  detalhesPerfil: DetalhesPerfil;
+}
 
 export interface PrevisaoSalario {
-  resultado: {
-    cargo_selecionado: string;
-    salario_estimado: string;
-    salario_corrigido: string;
-    fator_correcao: number;
-    detalhes_perfil: {
-      porte_empresa: string;
-      setor_atuacao: string;
-    }
-  };
-  status: string;
+  cargo: string;      // Agora está na raiz
+  mensagem: string;   // Substituiu o antigo 'status'
+  resultado: ResultadoDTO;
+
 }

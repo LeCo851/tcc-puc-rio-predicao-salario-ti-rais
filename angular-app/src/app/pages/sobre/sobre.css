@@ -1,0 +1,8 @@
+/* Estilos específicos da página Sobre (se necessário) */
+.card {
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  /* Efeito sutil ao passar o mouse */
+}

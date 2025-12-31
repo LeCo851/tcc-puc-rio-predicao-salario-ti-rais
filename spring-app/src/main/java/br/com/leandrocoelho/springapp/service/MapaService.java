@@ -25,7 +25,6 @@ public class MapaService {
 
     public List<ResponseMapaDTO> obterDadosMapa(DadosProfissionalDTO dadosProfissionalDTO){
 
-        try{
             ResponseMapaDTO[] resposta = restTemplate.postForObject(
                     mlApiUrlMapa,
                     dadosProfissionalDTO,
@@ -37,10 +36,7 @@ public class MapaService {
             listaMapa.forEach(item -> correcaoMonetariaService.aplicarCorrecaoMapa(item, dadosProfissionalDTO.getAnoReferencia()));
 
            return listaMapa;
-        }catch (Exception e){
 
-            throw e;
-        }
     }
 
 }

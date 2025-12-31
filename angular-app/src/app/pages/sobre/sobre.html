@@ -1,0 +1,137 @@
+<div class="container-fluid py-5 animate__animated animate__fadeIn"> <!-- Mudado para container-fluid -->
+
+  <div class="row justify-content-center">
+    <div class="col-xl-10 col-xxl-9"> <!-- Largura aumentada para telas grandes -->
+
+      <!-- CABEÇALHO COM FUNDO BRANCO -->
+      <div class="bg-white rounded-4 shadow-sm p-5 mb-5 text-center">
+        <h1 class="fw-bold text-primary display-5 mb-3">Sobre o Projeto</h1>
+        <p class="lead text-muted mx-auto mb-0" style="max-width: 700px;">
+          Trabalho de Conclusão de Curso (TCC) desenvolvido para o MBA em Data Science & Big Data da PUC-Rio.
+        </p>
+      </div>
+
+      <div class="row g-4">
+
+        <!-- COLUNA ESQUERDA: O PROJETO -->
+        <div class="col-lg-8"> <!-- Aumentado para dar mais espaço ao texto -->
+          <div class="card shadow-sm border-0 h-100">
+            <div class="card-body p-4 p-lg-5">
+              <h3 class="fw-bold mb-4"><i class="bi bi-lightbulb text-warning me-2"></i> O Objetivo</h3>
+              <p class="text-secondary lh-lg">
+                Este projeto visa resolver a assimetria de informações no mercado de trabalho de TI, fornecendo uma ferramenta
+                capaz de estimar salários com base em dados reais e históricos.
+              </p>
+              <p class="text-secondary lh-lg">
+                Utilizando a base de dados da <strong>RAIS (Relação Anual de Informações Sociais)</strong>, treinamos um modelo de
+                Machine Learning (LightGBM) capaz de entender padrões complexos entre cargo, escolaridade, localização, raça, idade e porte da empresa para cargos de TI e relacionados.
+              </p>
+
+              <hr class="my-4 opacity-10">
+
+              <h4 class="fw-bold mb-3"><i class="bi bi-layers text-primary me-2"></i> Arquitetura</h4>
+              <p class="text-secondary mb-4">
+                O sistema opera em uma arquitetura de microsserviços containerizada:
+              </p>
+
+              <div class="row g-3">
+                @for (tech of tecnologias; track tech.nome) {
+                  <div class="col-md-6">
+                    <div class="d-flex align-items-center p-3 bg-light rounded-3 border">
+                      <i class="bi {{tech.icone}} fs-3 text-primary me-3"></i>
+                      <div>
+                        <h6 class="fw-bold mb-0">{{ tech.nome }}</h6>
+                        <small class="text-muted">{{ tech.desc }}</small>
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- COLUNA DIREITA: AUTOR E LINKS -->
+        <div class="col-lg-4">
+
+          <!-- CARD AUTOR -->
+          <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body p-4 text-center">
+              <div class="mb-3">
+                <!-- Imagem do Perfil -->
+                <img src="eu.jpg"
+                     alt="Leandro Coelho"
+                     class="rounded-circle shadow-sm border border-4 border-white"
+                     width="130"
+                     height="130"
+                     style="object-fit: cover;">
+              </div>
+              <h4 class="fw-bold">Leandro Coelho</h4>
+              <p class="text-muted small text-uppercase fw-bold mb-3">Engenheiro de Software & Data Scientist</p>
+              <p class="text-secondary small">
+                Aluno do MBA em Data Science & Big Data pela Pontifícia Universidade Católica do Rio de Janeiro (PUC-Rio).
+              </p>
+            </div>
+          </div>
+
+          <!-- CARD LINKS -->
+          <div class="card shadow-sm border-0 bg-primary text-white">
+            <div class="card-body p-4">
+              <h5 class="fw-bold mb-4"><i class="bi bi-link-45deg"></i> Links Úteis</h5>
+              <div class="d-flex flex-column gap-3">
+                @for (link of links; track link.nome) {
+                  <a [href]="link.url" target="_blank" class="btn btn-light text-start fw-bold text-primary border-0">
+                    <i class="bi {{link.icone}} me-2"></i> {{ link.nome }}
+                  </a>
+                }
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- NOVA SEÇÃO: DESAFIOS E SOLUÇÕES -->
+      <div class="row mt-5">
+        <div class="col-12">
+          <div class="card shadow-sm border-0 bg-white">
+            <div class="card-body p-5">
+              <h3 class="fw-bold mb-4 text-center text-dark"><i class="bi bi-puzzle-fill text-danger me-2"></i> Metodologia & Desafios Técnicos</h3>
+              <p class="text-center text-muted mb-5 mx-auto" style="max-width: 800px;">
+                Principais obstáculos técnicos encontrados durante o desenvolvimento do TCC e as estratégias metodológicas adotadas para superá-los.
+              </p>
+
+              <div class="row g-4">
+                @for (item of desafios; track item.titulo) {
+                  <div class="col-md-6 col-xl-4">
+                    <div class="h-100 p-4 rounded-4 bg-light border position-relative overflow-hidden d-flex flex-column">
+
+
+                      <h5 class="fw-bold text-primary mb-3" style="min-height: 48px;">{{ item.titulo }}</h5>
+
+                      <!-- Removido flex-grow-1 para aproximar os blocos -->
+                      <div class="mb-3">
+                        <small class="text-uppercase fw-bold text-danger" style="font-size: 0.7rem;">O Problema</small>
+                        <p class="text-secondary small mb-0 text-justify">{{ item.problema }}</p>
+                      </div>
+
+                      <!-- Adicionado mt-auto se quiser empurrar a solução para baixo, mas para aproximar, removemos espaçadores -->
+                      <div>
+                        <small class="text-uppercase fw-bold text-success" style="font-size: 0.7rem;">A Solução</small>
+                        <p class="text-dark small fw-medium mb-0 text-justify">{{ item.solucao }}</p>
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

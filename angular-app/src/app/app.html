@@ -2,11 +2,13 @@
   <div class="container">
     <div class="d-flex align-items-center">
 
-      <img src="logo.jpg"
-           alt="Logo PUC-Rio"
-           height="55"
-           width="55"
-           class="me-3 bg-white rounded-circle p-1">
+      <a routerLink="/" style="cursor: pointer" title="Voltar para Predição">
+        <img src="logo.jpg"
+             alt="Logo PUC-Rio"
+             height="55"
+             width="55"
+             class="me-3 bg-white rounded-circle p-1">
+      </a>
 
       <div class="brand-text d-flex flex-column">
         <span class="course-title">MBA em Data Science & Big Data</span>
@@ -27,6 +29,12 @@
          routerLinkActive="active-link">
         <i class="bi bi-map me-1"></i> Mapa Brasil
       </a>
+
+      <a routerLink="/sobre"
+         class="btn btn-sm btn-outline-light border-0"
+         routerLinkActive="active-link">
+        <i class="bi bi-info-circle me-1"></i> Sobre
+      </a>
     </div>
 
   </div>
@@ -39,6 +47,6 @@
   <div class="container">
     <p class="mb-1"><strong>Pontifícia Universidade Católica do Rio de Janeiro</strong></p>
     <p class="mb-0">Projeto de TCC - MBA em Data Science & Big Data</p>
-    <small class="text-muted">Desenvolvido por Leandro Coelho &copy; 2025</small>
+    <small style="color: #cccccc;">Desenvolvido por Leandro Coelho &copy; 2025</small>
   </div>
 </footer>

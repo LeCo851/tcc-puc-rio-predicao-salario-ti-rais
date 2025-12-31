@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 2. Copia TODO o conteúdo da sua pasta local 'app' para a pasta 'app' no container
+# 2. Copia todo o conteúdo da sua pasta local 'app' para a pasta 'app' no container
 # Isso já levará o app.py, service.py, enums.py, mappings.py, schemas.py, 
 # o modelo .pkl e o arquivo .parquet de uma vez.
 COPY ./app ./app
