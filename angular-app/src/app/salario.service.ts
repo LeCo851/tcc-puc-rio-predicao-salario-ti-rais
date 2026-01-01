@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { DadosProfissional, PrevisaoSalario } from './models';
+import {environment} from '../environments/environment';
 
 export interface ResultadoMapa {
   uf: string;
@@ -20,8 +21,8 @@ export interface ResultadoMapa {
 export class SalarioService {
 
   // URL do seu Spring Boot (Backend)
-  private readonly apiUrl = 'http://127.0.0.1:8080/api/salarios/prever';
-  private readonly mapaUrl = 'http://localhost:8080/api/salarios/mapa';
+  private readonly apiUrl = `${environment.apiBaseUrl}/api/salarios/prever`;
+  private readonly mapaUrl = `${environment.apiBaseUrl}/api/salarios/mapa`;
 
   constructor(private readonly http: HttpClient) { }
 
