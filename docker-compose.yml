@@ -26,6 +26,40 @@ services:
     networks:
       - minha-rede-tcc
 
+  angular-app:
+      build: ./angular-app
+      container_name: angular-app-container
+      ports:
+        - "4200:80"
+      depends_on:
+        - spring-app
+      networks:
+        - minha-rede-tcc
+
+  # Banco de Dados de Métricas
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus_tcc
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - minha-rede-tcc
+
+  # Visualização (Dashboards)
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana_tcc
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - prometheus
+    networks:
+      - minha-rede-tcc
+
 networks:
   minha-rede-tcc:
     driver: bridge

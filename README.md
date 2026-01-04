@@ -1,55 +1,39 @@
 # TCC PUC-Rio - Predição de Salários de TI (RAIS)
 
-Este projeto é parte do Trabalho de Conclusão de Curso (TCC) do MBA em Data Science & Big Data da PUC-Rio. O objetivo é fornecer uma estimativa salarial para profissionais de Tecnologia da Informação (TI) com base em dados históricos da RAIS (Relação Anual de Informações Sociais), utilizando técnicas de Machine Learning.
+Este projeto é o Trabalho de Conclusão de Curso (TCC) desenvolvido para o **MBA em Data Science & Big Data da PUC-Rio**. O objetivo principal é fornecer uma ferramenta de estimativa salarial para profissionais de Tecnologia da Informação (TI) no Brasil, baseada em dados históricos da RAIS (Relação Anual de Informações Sociais) e utilizando algoritmos avançados de Machine Learning.
 
-## 🏗️ Arquitetura do Projeto
+## 🏗️ Arquitetura do Sistema
 
-O projeto segue uma arquitetura de microsserviços composta por três camadas principais:
+O projeto utiliza uma arquitetura de microsserviços containerizada para garantir escalabilidade e separação de responsabilidades:
 
-1.  **angular-app (Frontend):**
-    *   Interface web desenvolvida em Angular 21+.
-    *   **Predição:** Formulário inteligente para estimativa salarial personalizada.
-    *   **Dashboard:** Mapa interativo do Brasil (Highmaps) para visualização de médias salariais por estado.
-    *   **Sobre:** Documentação técnica integrada sobre a metodologia e desafios do projeto.
-    *   Consome a API do backend (`spring-app`).
+1.  **Frontend (angular-app):**
+    *   Interface web moderna desenvolvida em **Angular 21+**.
+    *   **Estimativa Salarial detalhada:** Formulário dinâmico para consulta de estimativas salariais personalizadas.
+    *   **Estimativa Salarial para o Brasil:** Visualização geográfica interativa utilizando **Highmaps**, exibindo médias salariais e volume de profissionais por estado.
+    *   **Sobre:** Seção integrada detalhando os desafios técnicos e as soluções estatísticas adotadas.
 
 2.  **spring-app (Backend):**
     *   API REST desenvolvida em Java com Spring Boot 4.
-    *   Atua como middleware e gateway de segurança.
+    *  Recebe as requisições do frontend, valida os dados e repassa para o serviço de ML, atua como middleware.
     *   **Correção Monetária:** Aplica o índice IPCA para atualizar valores históricos.
-    *   Recebe as requisições do frontend, valida os dados e repassa para o serviço de ML.
+   
 
-3.  **ml-api (Machine Learning Service):**
-    *   Serviço Python/FastAPI.
-    *   Carrega o modelo **LightGBM** treinado.
-    *   Realiza o pré-processamento (Target Encoding, tratamento de nulos) e a inferência salarial.
+3.  **Serviço de ML (ml-api):**
+    *   API desenvolvida em **Python** com **FastAPI**.
+    *   **Modelo:** Utiliza o modelo **LightGBM** para inferências.
+    *   **Processamento:** Realiza Target Encoding dinâmico e tratamento de Big Data utilizando o formato **Parquet**.
+    *   **Estatística:** Implementa lógica de **Quartis Dinâmicos** para senioridade usando a **idade** como **variável proxy** e estratégias de **Fallback** para amostras reduzidas.
 
 ## 🚀 Tecnologias Utilizadas
 
-*   **Frontend Web:**
-    *   Angular 21+
-    *   TypeScript
-    *   Highcharts & Highmaps (Visualização de Dados)
-    *   Bootstrap 5 (UI/UX)
-    *   Node.js & NPM
+*   **Linguagens:** Java 17, Python 3.9+, TypeScript.
+*   **Frameworks:** Spring Boot 4, FastAPI, Angular 21.
+*   **Ciência de Dados:** Pandas, NumPy, Scikit-learn, LightGBM, Joblib, DuckDB.
+*   **Visualização:** Highcharts & Highmaps, Bootstrap 5.
+*   **Infraestrutura:** Docker, Docker Compose.
+*   **Monitoramento:** Actuator, Prometheus e Grafana.
 
-*   **Backend Java:**
-    *   Java 17+
-    *   Spring Boot 4.x
-    *   Maven
-    *   Lombok
-
-*   **Machine Learning & Python:**
-    *   Python 3.9+
-    *   FastAPI
-    *   Pandas, NumPy, Scikit-learn
-    *   LightGBM (Modelo de Regressão)
-    *   Joblib
-
-*   **Infraestrutura:**
-    *   Docker & Docker Compose
-
-## 📦 Estrutura de Diretórios
+## 📦 Estrutura do Repositório
 
 ```
 tcc-puc-rio-predicao-salario-ti-rais/
@@ -66,51 +50,39 @@ tcc-puc-rio-predicao-salario-ti-rais/
 │   ├── Dockerfile
 │   ├── modelo_salario_ti.pkl
 │   └── ...
-└── docker-compose.yml      # Orquestração (ML API)
+└── docker-compose.yml      # Execução containerizada dos 3 serviços
 ```
 
 ## 🛠️ Como Executar
 
 ### Pré-requisitos
+*   Docker e Docker Compose instalados.
+*   Node.js e Java JDK (opcional, apenas para desenvolvimento local fora do Docker).
 
-*   Docker e Docker Compose.
-*   Java JDK 17+ e Maven (para rodar o backend localmente).
-*   Node.js e NPM (para rodar o frontend localmente).
+### Passo a Passo (Docker)
+1.  Construa e inicie os serviços:
+    ```bash
+    docker-compose up --build
+    ```
+2.  Acesse as aplicações:
+    *   **Frontend:** `http://localhost:4200`
+    *   **Backend Java:** `http://localhost:8080`
+    *   **API Python (Docs):** `http://localhost:8000/docs`
+    *   **Grafana:** `http://localhost:3000/`
 
-### Passo a Passo
+### Passo a Passo (Produção - Cloud)
+1. Acesse a aplicação em produção em `https://tcc-puc-rio-predicao-salario-ti-rais-zc9u.onrender.com/`
+2. Back-End java em  `https://tcc-puc-rio-predicao-salario-ti-rais-1.onrender.com/actuator/health`
+3. FastAPI em `https://tcc-puc-rio-predicao-salario-ti-rais.onrender.com/docs`
 
-#### 1. Serviço de Machine Learning (Docker)
-O serviço de ML está containerizado. Na raiz do projeto, execute:
-```bash
-docker-compose up --build
-```
-*   O serviço estará disponível em: `http://localhost:8000`
+## 📝 Metodologia e Diferenciais
 
-#### 2. Backend (Spring Boot)
-Em um novo terminal, navegue até a pasta `spring-app` e execute:
-```bash
-cd spring-app
-./mvnw spring-boot:run
-```
-*   A API estará disponível em: `http://localhost:8080`
+*   **Variável Proxy:** Uso da idade como substituto estatístico para tempo de experiência.
+*   **Senioridade Dinâmica:** Classificação (Jr/Pl/Sr/Esp) baseada na distribuição real de cada cargo (Quartis), feito em tempo real pelo sistema, evitando cortes arbitrários.
+*   **Robustez:** Sistema de Fallback automático para médias nacionais quando a amostra regional é insuficiente ($n < 100$).
+*   **Atualização Monetária:** Todos os resultados são corrigidos pela inflação acumulada (IPCA).
 
-#### 3. Frontend (Angular)
-Em outro terminal, navegue até a pasta `angular-app`, instale as dependências e inicie o servidor:
-```bash
-cd angular-app
-npm install
-ng serve
-```
-*   Acesse a aplicação no navegador em: `http://localhost:4200`
-
-## 🔌 Endpoints e Fluxo
-
-1.  **Usuário** acessa `http://localhost:4200` e interage com a interface.
-2.  **Angular** envia requisições para o **Spring Boot** (`/api/salarios/prever` ou `/api/salarios/mapa`).
-3.  **Spring Boot** processa regras de negócio (ex: IPCA) e repassa para o **Python** (`/predict`).
-4.  **ML API** retorna o salário estimado, que faz o caminho inverso até o usuário.
-
-## 📝 Autor
+## 👤 Autor
 
 **Leandro Coelho**
-MBA em Data Science & Big Data - PUC-Rio
+Engenheiro de software e Cientista de Dados.
