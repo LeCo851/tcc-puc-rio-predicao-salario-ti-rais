@@ -57,10 +57,10 @@ export class Home {
 
   // Nova lista para o Select de Experiência
   listaExperiencias = [
-    { label: 'Júnior (Iniciante)', value: 'JUNIOR' },
-    { label: 'Pleno (Intermediário)', value: 'PLENO' },
-    { label: 'Sênior (Avançado)', value: 'SENIOR' },
-    { label: 'Especialista / Master', value: 'ESPECIALISTA' }
+    { label: 'Júnior', value: 'JUNIOR' },
+    { label: 'Pleno ', value: 'PLENO' },
+    { label: 'Sênior', value: 'SENIOR' },
+    { label: 'Especialista / Tech Lead', value: 'ESPECIALISTA' }
   ];
 
   constructor(private service: SalarioService, private cdr: ChangeDetectorRef) {}

@@ -1,0 +1,19 @@
+name: Manter Render Acordado
+
+on:
+  schedule:
+    # Roda a cada 15 minutos (para não cair no sleep)
+    # Das 08:00 as 23:00 (Horário UTC - ajustado aprox para BR)
+    - cron: '0,10,20,30,40,50,59 8-23 * * *'
+  workflow_dispatch: # Permite rodar manualmente se precisar testar
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Acordar Python API
+        # O curl tenta conectar. Se demorar, ele espera até 300 segundos (5 min)
+        run: curl --max-time 300 https://tcc-puc-rio-predicao-salario-ti-rais.onrender.com/
+
+      - name: Acordar Java API
+        run: curl --max-time 300 https://tcc-puc-rio-predicao-salario-ti-rais-1.onrender.com/actuator/health

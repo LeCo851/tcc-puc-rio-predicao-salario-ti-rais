@@ -10,14 +10,14 @@
             <div class="card-body p-4">
 
               <div class="text-center mb-4">
-                <h3 class="fw-bold" style="color: var(--puc-blue)">Estimativa Salarial</h3>
-                <p class="text-muted small">Preencha os dados para consultar a IA.</p>
+                <h3 class="fw-bold" style="color: var(--puc-blue)">Estimativa Salarial com Machine Learning</h3>
+                <p class="text-muted small">Preencha os dados para consultar o modelo preditivo.</p>
               </div>
 
               <form (ngSubmit)="calcular()" #formSalario="ngForm">
 
                 <div class="mb-3">
-                  <label for="cargoInput" class="form-label fw-bold small text-muted">Cargo / Ocupação</label>
+                  <label for="cargoInput" class="form-label fw-bold small text-muted">Cargo / Ocupação / CBO</label>
                   <input
                     type="text"
                     class="form-control bg-light"
@@ -185,10 +185,11 @@
                 </div>
 
                 <div class="card-body p-5 text-center d-flex flex-column justify-content-center align-items-center flex-grow-1">
-
+                  <p class="text-muted small text-uppercase fw-bold">Título oficial do cargo </p>
                   <h4 class="text-uppercase text-secondary fw-bold ls-1 mb-4">
                     {{ resultado.cargo }}
                   </h4>
+
 
                   <div class="d-flex justify-content-center gap-2 mb-5 flex-wrap">
                     <span class="badge bg-white text-dark border shadow-sm p-2">
