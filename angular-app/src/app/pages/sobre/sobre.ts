@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common';
 export class Sobre {
 
   tecnologias = [
-    { nome: 'Angular 17+', icone: 'bi-filetype-html', desc: 'Frontend moderno e reativo' },
+    { nome: 'Angular 21+', icone: 'bi-filetype-html', desc: 'Frontend moderno e reativo' },
     { nome: 'Spring Boot 4', icone: 'bi-filetype-java', desc: 'Backend robusto em Java' },
     { nome: 'Python & FastAPI', icone: 'bi-filetype-py', desc: 'API de Machine Learning' },
     { nome: 'LightGBM', icone: 'bi-cpu', desc: 'Modelo de Gradient Boosting' },
@@ -20,9 +20,8 @@ export class Sobre {
   ];
 
   links = [
-    { nome: 'Repositório GitHub', url: 'https://github.com/leandrocoelho/tcc-puc-rio-predicao-salario-ti-rais', icone: 'bi-github' },
-    { nome: 'LinkedIn', url: 'https://www.linkedin.com/in/leandro-coelho/', icone: 'bi-linkedin' },
-    { nome: 'PUC-Rio', url: 'https://www.puc-rio.br', icone: 'bi-mortarboard-fill' }
+    { nome: 'Repositório GitHub', url: 'https://github.com/LeCo851', icone: 'bi-github' },
+    { nome: 'LinkedIn', url: 'https://www.linkedin.com/in/leco/', icone: 'bi-linkedin' }
   ];
 
   desafios = [
