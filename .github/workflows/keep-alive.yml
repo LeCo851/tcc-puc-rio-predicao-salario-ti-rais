@@ -4,7 +4,7 @@ on:
   schedule:
     # Roda a cada 15 minutos (para não cair no sleep)
     # Das 08:00 as 23:00 (Horário UTC - ajustado aprox para BR)
-    - cron: '0,10,20,30,40,50,59 8-23 * * *'
+    - cron: '*/5 8-23 * * *'
   workflow_dispatch: # Permite rodar manualmente se precisar testar
 
 jobs:
