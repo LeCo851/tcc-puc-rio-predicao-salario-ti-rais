@@ -57,9 +57,10 @@
 
 &nbsp;&nbsp;&nbsp;&nbsp;De forma complementar à avaliação de erro, a análise de explicabilidade do modelo (Feature Importance) forneceu insights valiosos sobre a dinâmica salarial. O algoritmo revelou que a Escolaridade e a Ocupação (CBO) são os fatores mais significativos para a predição. Em terceiro lugar de importância destacou-se a Idade, o que valida matematicamente a estratégia adotada na etapa de modelagem de utilizá-la como variável proxy para tempo de experiência. Fatores como o porte da empresa e a geolocalização (UF) também demonstraram alto peso preditivo, confirmando que o modelo conseguiu capturar a realidade estrutural e econômica das contratações no país.
 
+![img.png](img.png)
+
 &nbsp;&nbsp;&nbsp;&nbsp;Sob a ótica da Engenharia de Software, o projeto alcançou com êxito o objetivo de integrar ecossistemas heterogêneos (Java e Python) de forma estável em um ambiente de nuvem (Render). A implementação de rotinas automatizadas de keep-alive mitigou com sucesso os gargalos de latência (cold start) inerentes a plataformas de hospedagem gratuitas, garantindo a alta disponibilidade da aplicação. O resultado final consolida-se em uma interface web amigável, onde qualquer usuário, sem conhecimentos técnicos, pode consultar faixas preditivas de remuneração de forma intuitiva.
 
-![img.png](img.png)
 ## 4. Conclusões
 &nbsp;&nbsp;&nbsp;&nbsp;O trabalho demonstrou a viabilidade e o imenso valor agregado de unir a robustez da Engenharia de Software clássica ao potencial analítico do Machine Learning. O processamento da base RAIS forneceu a confiabilidade necessária para o domínio do problema, enquanto a adoção de tecnologias modernas (Spring Boot, Angular, FastAPI e Docker) permitiu a entrega de uma ferramenta de uso prático para a sociedade. Observa-se que a padronização de ambientes via containers e os pipelines de CI/CD foram cruciais para o sucesso da implantação. Trabalhos futuros podem explorar a inclusão de novas features preditivas e o escalonamento da infraestrutura para nuvens elásticas mais parrudas.
 
