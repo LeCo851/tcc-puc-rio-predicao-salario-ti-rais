@@ -23,10 +23,11 @@
 
 ## 2. Modelagem
 &nbsp;&nbsp;&nbsp;&nbsp;A construção do modelo exigiu estratégias metodológicas avançadas para contornar complexidades inerentes aos dados. Para lidar com a alta volumetria (Big Data) da RAIS, utilizou-se uma amostragem estratificada com cerca de 7 milhões de registros (2019 a 2024) otimizados no formato Parquet, garantindo eficiência de processamento. Variáveis de alta cardinalidade, como o CBO (Classificação Brasileira de Ocupações), foram tratadas via Target Encoding com média suavizada. Um dos maiores desafios contornados foi a ausência de classificações de senioridade (Júnior/Pleno/Sênior) na base administrativa; para solucionar essa lacuna, implementou-se a idade como variável proxy, calculando quartis dinâmicos em tempo real para inferir a maturidade profissional do indivíduo dentro de cada cargo.
-### Escopo de Profissionais (CBOs Avaliados)
-&nbsp;&nbsp;&nbsp;&nbsp;Para delimitar o escopo do projeto estritamente aos profissionais de Tecnologia da Informação e áreas correlatas (Data Science, Infraestrutura, Gestão e Telecomunicações), a extração da base RAIS foi filtrada para contemplar as 40 ocupações abaixo, baseadas na Classificação Brasileira de Ocupações (CBO):
+
 &nbsp;&nbsp;&nbsp;&nbsp;Sob a ótica arquitetural, o ecossistema foi projetado em microsserviços conteinerizados via Docker, garantindo uma integração robusta entre os ecossistemas. A inferência de Machine Learning (LightGBM) foi encapsulada em uma API RESTful em Python (FastAPI). Já a orquestração e as regras de negócio foram alocadas em um backend desenvolvido em Java 17 com Spring Boot 4. Este backend atua não apenas como ponte, mas como validador: ele aplica algoritmos de engenharia financeira para corrigir valores nominais históricos via IPCA acumulado e executa um mecanismo de robustez estatística (*fallback*), acionando a média nacional caso a inferência local possua uma amostra inferior a 100 registros. Por fim, a interface visual foi construída em Angular 21+, utilizando a biblioteca HighCharts para renderização geoespacial interativa, com fluxos de CI/CD automatizados pelo GitHub Actions.
 
+### Escopo de Profissionais (CBOs Avaliados)
+&nbsp;&nbsp;&nbsp;&nbsp;Para delimitar o escopo do projeto estritamente aos profissionais de Tecnologia da Informação e áreas correlatas (Data Science, Infraestrutura, Gestão e Telecomunicações), a extração da base RAIS foi filtrada para contemplar as 40 ocupações abaixo, baseadas na Classificação Brasileira de Ocupações (CBO):
 
 | Cargo / Ocupação (Parte 1) | Cargo / Ocupação (Parte 2) |
 | :--- | :--- |
