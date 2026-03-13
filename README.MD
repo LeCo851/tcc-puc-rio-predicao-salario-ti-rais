@@ -23,10 +23,40 @@
 
 ## 2. Modelagem
 &nbsp;&nbsp;&nbsp;&nbsp;A construção do modelo exigiu estratégias metodológicas avançadas para contornar complexidades inerentes aos dados. Para lidar com a alta volumetria (Big Data) da RAIS, utilizou-se uma amostragem estratificada com cerca de 7 milhões de registros (2019 a 2024) otimizados no formato Parquet, garantindo eficiência de processamento. Variáveis de alta cardinalidade, como o CBO (Classificação Brasileira de Ocupações), foram tratadas via Target Encoding com média suavizada. Um dos maiores desafios contornados foi a ausência de classificações de senioridade (Júnior/Pleno/Sênior) na base administrativa; para solucionar essa lacuna, implementou-se a idade como variável proxy, calculando quartis dinâmicos em tempo real para inferir a maturidade profissional do indivíduo dentro de cada cargo.
+### Escopo de Profissionais (CBOs Avaliados)
+&nbsp;&nbsp;&nbsp;&nbsp;Para delimitar o escopo do projeto estritamente aos profissionais de Tecnologia da Informação e áreas correlatas (Data Science, Infraestrutura, Gestão e Telecomunicações), a extração da base RAIS foi filtrada para contemplar as 40 ocupações abaixo, baseadas na Classificação Brasileira de Ocupações (CBO):
 
+| Cargo / Ocupação (Parte 1) | Cargo / Ocupação (Parte 2) |
+| :--- | :--- |
+| Administrador de banco de dados | Engenheiro de equipamentos em computação |
+| Administrador de redes | Engenheiro de redes de comunicação |
+| Administrador de sistemas operacionais | Engenheiros de sistemas operacionais em computação |
+| Administrador em segurança da informação | Especialista em pesquisa operacional |
+| Analista de desenvolvimento de sistemas | Estatístico |
+| Analista de e-commerce | Estatístico (estatística aplicada) |
+| Analista de negócios | Estatístico teórico |
+| Analista de pesquisa de mercado | Gerente de infraestrutura de tecnologia da informação |
+| Analista de redes e de comunicação de dados | Gerente de operação de tecnologia da informação |
+| Analista de riscos | Gerente de projetos de tecnologia da informação |
+| Analista de sistemas de automação | Gerente de segurança da informação |
+| Analista de suporte computacional | Gerente de suporte técnico de tecnologia da info. |
+| Analista de testes de tecnologia da informação | Oficial de proteção de dados pessoais (dpo) |
+| Arquiteto de soluções de tecnologia da informação | Pesquisador em ciências da computação e informática |
+| Cientista de dados | Professor de computação (no ensino superior) |
+| Desenhista industrial gráfico (designer gráfico) | Tecnólogo em gestão da tecnologia da informação |
+| Desenvolvedor de multimídia | Técnico de comunicação de dados |
+| Desenvolvedor de sistemas de TI (técnico) | Técnico de rede (telecomunicações) |
+| Desenvolvedor web (técnico) | Técnico de suporte ao usuário de TI |
+| Diretor de tecnologia da informação | Engenheiro de aplicativos em computação |
 &nbsp;&nbsp;&nbsp;&nbsp;Sob a ótica arquitetural, o ecossistema foi projetado em microsserviços conteinerizados via Docker, garantindo uma integração robusta entre os ecossistemas. A inferência de Machine Learning (LightGBM) foi encapsulada em uma API RESTful em Python (FastAPI). Já a orquestração e as regras de negócio foram alocadas em um backend desenvolvido em Java 17 com Spring Boot 4. Este backend atua não apenas como ponte, mas como validador: ele aplica algoritmos de engenharia financeira para corrigir valores nominais históricos via IPCA acumulado e executa um mecanismo de robustez estatística (*fallback*), acionando a média nacional caso a inferência local possua uma amostra inferior a 100 registros. Por fim, a interface visual foi construída em Angular 21+, utilizando a biblioteca HighCharts para renderização geoespacial interativa, com fluxos de CI/CD automatizados pelo GitHub Actions.
 ## 3. Resultados
-&nbsp;&nbsp;&nbsp;&nbsp;O treinamento do modelo sobre a base de aproximadamente 7 milhões de registros permitiu inferências salariais consistentes para o setor de tecnologia da informação. Quantitativamente, o modelo LightGBM apresentou um desempenho robusto, alcançando um coeficiente de determinação (R²) de 48.31%, um resultado condizente com a natureza complexa e a alta variação dos salários de TI no Brasil. Além disso, o Erro Médio Absoluto (MAE) obtido foi de aproximadamente R\$ 2444,68, com um Erro Percentual Médio Absoluto de 39,13% e a Raiz do Erro Quadrático Médio (RMSE) em R$ 4.239,88. Uma margem de erro considerada aceitável e aderente à realidade das negociações do mercado formal. Sob a ótica da Engenharia de Software, o projeto alcançou o objetivo de integrar ecossistemas heterogêneos (Java e Python) de forma estável em um ambiente de nuvem (Render). A implementação de rotinas automatizadas de keep-alive mitigou os gargalos de latência (cold start) inerentes a plataformas de hospedagem gratuitas, garantindo disponibilidade da aplicação. O resultado é uma interface web amigável onde qualquer usuário pode consultar as predições.
+&nbsp;&nbsp;&nbsp;&nbsp;O treinamento do modelo LightGBM sobre a base de aproximadamente 7 milhões de registros permitiu estabelecer inferências salariais consistentes para o setor de tecnologia da informação. Na avaliação quantitativa, o modelo alcançou um coeficiente de determinação (R²) de 48,31%, um resultado condizente com a natureza complexa e a alta variância dos salários de TI no Brasil. O Erro Médio Absoluto (MAE) situou-se em R\$ 2.444,68, com um Erro Percentual Absoluto Médio (MAPE) de 39,13% e a Raiz do Erro Quadrático Médio (RMSE) em R\$ 4.239,88. Estas métricas evidenciam que o algoritmo captura com as tendências de mercado, porém confirmam que a remuneração final sofre forte influência de variáveis latentes não mapeadas na base da RAIS, como o domínio de idiomas e a stack tecnológica específica do profissional.
+
+De forma complementar à avaliação de erro, a análise de explicabilidade do modelo (Feature Importance) forneceu insights valiosos sobre a dinâmica salarial. O algoritmo revelou que a Escolaridade e a Ocupação (CBO) são os fatores mais significativos para a predição. Em terceiro lugar de importância destacou-se a Idade, o que valida matematicamente a estratégia adotada na etapa de modelagem de utilizá-la como variável proxy para tempo de experiência. Fatores como o porte da empresa e a geolocalização (UF) também demonstraram alto peso preditivo, confirmando que o modelo conseguiu capturar a realidade estrutural e econômica das contratações no país.
+
+Sob a ótica da Engenharia de Software, o projeto alcançou com êxito o objetivo de integrar ecossistemas heterogêneos (Java e Python) de forma estável em um ambiente de nuvem (Render). A implementação de rotinas automatizadas de keep-alive mitigou com sucesso os gargalos de latência (cold start) inerentes a plataformas de hospedagem gratuitas, garantindo a alta disponibilidade da aplicação. O resultado final consolida-se em uma interface web amigável, onde qualquer usuário, sem conhecimentos técnicos, pode consultar faixas preditivas de remuneração de forma intuitiva.
+
+![img.png](img.png)
 ## 4. Conclusões
 &nbsp;&nbsp;&nbsp;&nbsp;O trabalho demonstrou a viabilidade e o imenso valor agregado de unir a robustez da Engenharia de Software clássica ao potencial analítico do Machine Learning. O processamento da base RAIS forneceu a confiabilidade necessária para o domínio do problema, enquanto a adoção de tecnologias modernas (Spring Boot, Angular, FastAPI e Docker) permitiu a entrega de uma ferramenta de uso prático para a sociedade. Observa-se que a padronização de ambientes via containers e os pipelines de CI/CD foram cruciais para o sucesso da implantação. Trabalhos futuros podem explorar a inclusão de novas features preditivas e o escalonamento da infraestrutura para nuvens elásticas mais parrudas.
 
